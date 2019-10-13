@@ -12,8 +12,8 @@ import java.util.List;
 @Dao
 public interface VideoDao {
 
-    @Query("SELECT * FROM videos ORDER BY published_at DESC")
-    LiveData<List<Video>> selectAllByDate();
+    @Query("SELECT * FROM videos")
+    LiveData<List<Video>> selectAllVideos();
 
     @Insert
     void insert(Video video);

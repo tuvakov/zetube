@@ -1,43 +1,48 @@
 package com.tuvakov.zeyoube.android.repository;
 
-import android.app.Application;
-
 import androidx.lifecycle.LiveData;
 
 import com.tuvakov.zeyoube.android.data.Subscription;
 import com.tuvakov.zeyoube.android.data.SubscriptionDao;
-import com.tuvakov.zeyoube.android.data.ZeYouBeDatabase;
-import com.tuvakov.zeyoube.android.utils.AppExecutors;
 
 import java.util.List;
+import java.util.concurrent.Executor;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class SubscriptionRepo {
 
-    private SubscriptionDao mSubscriptionDao;
-    private AppExecutors mAppExecutors;
+    private final SubscriptionDao mSubscriptionDao;
+    private final Executor mDiskIO;
     private LiveData<List<Subscription>> mAllSubscriptions;
 
-    public SubscriptionRepo(Application application) {
-        mSubscriptionDao = ZeYouBeDatabase.getInstance(application).getSubscriptionDao();
-        mAppExecutors = AppExecutors.getInstance();
+    @Inject
+    public SubscriptionRepo(SubscriptionDao subscriptionDao, Executor diskIO) {
+        mSubscriptionDao = subscriptionDao;
+        mDiskIO = diskIO;
         mAllSubscriptions = mSubscriptionDao.selectAll();
     }
 
     public void insert(Subscription subscription) {
-        mAppExecutors.getDiskIO().execute(() -> mSubscriptionDao.insert(subscription));
+        mDiskIO.execute(() -> mSubscriptionDao.insert(subscription));
+    }
+
+    public void bulkInsertForService(List<Subscription> subscriptions) {
+        mSubscriptionDao.bulkInsert(subscriptions);
     }
 
     public void update(Subscription subscription) {
-        mAppExecutors.getDiskIO().execute(() -> mSubscriptionDao.update(subscription));
+        mDiskIO.execute(() -> mSubscriptionDao.update(subscription));
     }
 
     public void delete(Subscription subscription) {
-        mAppExecutors.getDiskIO().execute(() -> mSubscriptionDao.delete(subscription));
+        mDiskIO.execute(() -> mSubscriptionDao.delete(subscription));
     }
 
     public void deleteAll() {
-        mAppExecutors.getDiskIO().execute(() -> mSubscriptionDao.deleteAll());
+        mDiskIO.execute(mSubscriptionDao::deleteAll);
     }
 
     public LiveData<List<Subscription>> getAllSubscriptions() {

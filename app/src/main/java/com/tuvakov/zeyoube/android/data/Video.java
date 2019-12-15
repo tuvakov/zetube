@@ -2,22 +2,16 @@ package com.tuvakov.zeyoube.android.data;
 
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
-import androidx.room.ForeignKey;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+import org.threeten.bp.Instant;
 import org.threeten.bp.ZoneId;
 import org.threeten.bp.ZonedDateTime;
-import org.threeten.bp.format.DateTimeFormatter;
 
 import java.util.Objects;
 
-import static androidx.room.ForeignKey.CASCADE;
-
-@Entity(tableName = "videos",
-        foreignKeys = @ForeignKey(entity = Subscription.class,
-                parentColumns = "id", childColumns = "channel_id", onDelete = CASCADE)
-)
+@Entity(tableName = "videos")
 public class Video {
 
     @PrimaryKey(autoGenerate = true)
@@ -25,26 +19,29 @@ public class Video {
     private String title;
     private String thumbnail;
     private String description;
-    @ColumnInfo(name = "channel_id")
-    private int channelId;
+    @ColumnInfo(name = "channel_title")
+    private String channelTitle;
+    @ColumnInfo(name = "channel_avatar")
+    private String channelAvatar;
     @ColumnInfo(name = "video_id")
     private String videoId;
     @ColumnInfo(name = "is_seen")
     private boolean isSeen;
     @ColumnInfo(name = "published_at")
-    private String publishedAt;
-    @Ignore
-    private ZonedDateTime localPublishedAt;
+    private long publishedAt;
 
     @Ignore
     public Video() {}
 
     public Video(String title, String thumbnail, String description,
-                 int channelId, String videoId, boolean isSeen, String publishedAt) {
+                 String channelTitle, String channelAvatar, String videoId,
+                 boolean isSeen, long publishedAt) {
+
         this.title = title;
         this.thumbnail = thumbnail;
         this.description = description;
-        this.channelId = channelId;
+        this.channelTitle = channelTitle;
+        this.channelAvatar = channelAvatar;
         this.videoId = videoId;
         this.isSeen = isSeen;
         this.publishedAt = publishedAt;
@@ -82,12 +79,20 @@ public class Video {
         this.description = description;
     }
 
-    public int getChannelId() {
-        return channelId;
+    public String getChannelTitle() {
+        return channelTitle;
     }
 
-    public void setChannelId(int channelId) {
-        this.channelId = channelId;
+    public void setChannelTitle(String channelTitle) {
+        this.channelTitle = channelTitle;
+    }
+
+    public String getChannelAvatar() {
+        return channelAvatar;
+    }
+
+    public void setChannelAvatar(String channelAvatar) {
+        this.channelAvatar = channelAvatar;
     }
 
     public String getVideoId() {
@@ -106,22 +111,16 @@ public class Video {
         isSeen = seen;
     }
 
-    public String getPublishedAt() {
+    public long getPublishedAt() {
         return publishedAt;
     }
 
-    public void setPublishedAt(String publishedAt) {
+    public void setPublishedAt(long publishedAt) {
         this.publishedAt = publishedAt;
     }
 
-
     public ZonedDateTime getLocalDateTimePublishedAt() {
-        if (localPublishedAt != null) {
-            return localPublishedAt;
-        }
-        ZonedDateTime utc = ZonedDateTime.parse(publishedAt, DateTimeFormatter.ISO_DATE_TIME);
-        localPublishedAt = utc.withZoneSameInstant(ZoneId.systemDefault());
-        return localPublishedAt;
+        return Instant.ofEpochMilli(publishedAt).atZone(ZoneId.systemDefault());
     }
 
     @Override
@@ -129,14 +128,12 @@ public class Video {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Video video = (Video) o;
-        return getId() == video.getId() &&
-                getChannelId() == video.getChannelId() &&
-                getVideoId().equals(video.getVideoId());
+        return getId() == video.getId() && getVideoId().equals(video.getVideoId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getChannelId(), getVideoId());
+        return Objects.hash(getId(), getVideoId());
     }
 
     @Override

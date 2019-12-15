@@ -1,5 +1,27 @@
 <resources>
     <string name="app_name">ZeYouBe</string>
-    <string name="video_thumbnail_content_description">Video Thumbnail</string>
-    <string name="avatar_thumbnail_content_description">Channel avatar</string>
+
+    <!-- Image content descriptions -->
+    <string name="content_description_video_thumbnail">Video Thumbnail</string>
+    <string name="content_description_avatar_thumbnail">Channel avatar</string>
+
+    <!-- Messages -->
+    <string name="msg_error_sync_failure">
+        Something went wrong try again later by manual sync using the button top right corner or
+        relaunching the app after killing.
+    </string>
+    <string name="msg_warning_install_google_play_services">
+        Please install Google Play Services.
+    </string>
+    <string name="msg_warning_no_network">The device is offline</string>
+    <string name="msg_info_sync_start">
+        Preparing your subscription feed. Please wait for a moment!
+    </string>
+    <string name="msg_success_sync_success"> Sync completed successfully. </string>
+    <string name="msg_permission_get_accounts">
+        This app needs to access your Google account (via Contacts) in order to fetch your YouTube
+        subscription feed.
+    </string>
+    <string name="msg_info_empty_result_set">Empty result set.</string>
+    <string name="msg_info_restart_or_man_sync">Please restart the app or press manual sync button at the top of the screen.</string>
 </resources>

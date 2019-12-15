@@ -2,7 +2,7 @@ package com.tuvakov.zeyoube.android;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.SparseArray;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,18 +15,16 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.tuvakov.zeyoube.android.data.Subscription;
 import com.tuvakov.zeyoube.android.data.Video;
 
 import org.threeten.bp.format.DateTimeFormatter;
 import org.threeten.bp.format.FormatStyle;
 
-import java.util.List;
 
 public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoViewHolder> {
 
+    private static final String TAG = "VideoFeedAdapter";
     private ItemClickListener mItemClickListener;
-    private SparseArray<Subscription> mChannelList;
 
     public VideoFeedAdapter() {
         super(new DiffUtil.ItemCallback<Video>() {
@@ -42,8 +40,6 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
                         && oldItem.getVideoId().equals(newItem.getVideoId());
             }
         });
-
-        mChannelList = new SparseArray<>();
     }
 
     @NonNull
@@ -57,16 +53,13 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
     @Override
     public void onBindViewHolder(@NonNull VideoViewHolder holder, int position) {
         Video currentVideo = getItem(position);
-        Subscription channel = mChannelList.get(currentVideo.getChannelId());
 
-        if (channel != null) {
-            holder.textViewInfo.setText(String.format("%s \u2022 ", channel.getTitle()));
-            Glide.with(holder.imageViewChannelAvatar.getContext())
-                    .load(channel.getThumbnail())
-                    .centerCrop()
-                    .placeholder(new ColorDrawable(Color.GRAY))
-                    .into(holder.imageViewChannelAvatar);
-        }
+        Glide.with(holder.imageViewChannelAvatar.getContext())
+                .load(currentVideo.getChannelAvatar())
+                .centerCrop()
+                .circleCrop()
+                .placeholder(new ColorDrawable(Color.GRAY))
+                .into(holder.imageViewChannelAvatar);
 
         Glide.with(holder.imageViewVideoThumbnail.getContext())
                 .load(currentVideo.getThumbnail())
@@ -74,9 +67,11 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
                 .placeholder(new ColorDrawable(Color.GRAY))
                 .into(holder.imageViewVideoThumbnail);
 
+        holder.textViewInfo.setText(String.format("%s \u2022 ", currentVideo.getChannelTitle()));
         holder.textViewTitle.setText(currentVideo.getTitle());
         String publishedAt = currentVideo.getLocalDateTimePublishedAt()
                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
+        Log.d(TAG, "onBindViewHolder: " + currentVideo.getLocalDateTimePublishedAt());
         holder.textViewInfo.append(publishedAt);
     }
 
@@ -89,20 +84,6 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.mItemClickListener = itemClickListener;
     }
-
-
-    void setChannels(List<Subscription> channels) {
-
-        if (channels == null) return;
-
-        mChannelList.clear();
-        for (Subscription channel : channels) {
-            mChannelList.append(channel.getId(), channel);
-        }
-
-        notifyDataSetChanged();
-    }
-
 
     class VideoViewHolder extends RecyclerView.ViewHolder {
 
@@ -124,9 +105,7 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
                     mItemClickListener.onClick(getItem(position));
                 }
             });
-
         }
-
     }
 
     public interface ItemClickListener {

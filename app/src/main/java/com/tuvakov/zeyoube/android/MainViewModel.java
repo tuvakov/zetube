@@ -13,6 +13,7 @@ class MainViewModel extends ViewModel {
 
     private SubscriptionRepo mSubscriptionRepo;
     private VideoRepo mVideoRepo;
+    private boolean mIsSyncing = false;
 
     private static final String TAG = "MainViewModel";
 
@@ -31,5 +32,13 @@ class MainViewModel extends ViewModel {
 
     void deleteAllSubscriptions() {
         mSubscriptionRepo.deleteAll();
+    }
+
+    void setIsSyncing(boolean flag) {
+        mIsSyncing = flag;
+    }
+
+    boolean isSyncing() {
+        return mIsSyncing;
     }
 }

@@ -45,6 +45,10 @@ public class VideoRepo {
         mDiskIO.execute(mVideoDao::deleteAll);
     }
 
+    public void deleteAllForService() {
+        mVideoDao.deleteAll();
+    }
+
     public LiveData<List<Video>> getAllVideos() {
         return mAllVideos;
     }

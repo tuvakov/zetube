@@ -1,7 +1,7 @@
 package com.tuvakov.zeyoube.android.dagger;
 
 import com.tuvakov.zeyoube.android.MainActivity;
-import com.tuvakov.zeyoube.android.VideoFeedScratchSyncService;
+import com.tuvakov.zeyoube.android.VideoFeedSyncService;
 
 import javax.inject.Singleton;
 
@@ -13,7 +13,7 @@ public interface AppComponent {
 
     void injectMainActivityFields(MainActivity mainActivity);
 
-    void injectVideoFeedScratchSyncService(VideoFeedScratchSyncService service);
+    void injectVideoFeedSyncService(VideoFeedSyncService service);
 
     @Component.Factory
     interface Factory {

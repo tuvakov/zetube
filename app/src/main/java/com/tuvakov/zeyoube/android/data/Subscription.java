@@ -3,11 +3,12 @@ package com.tuvakov.zeyoube.android.data;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.Ignore;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 import java.util.Objects;
 
-@Entity(tableName = "subscriptions")
+@Entity(tableName = "subscriptions", indices = {@Index(value = "channel_id", unique = true)})
 public class Subscription {
 
     @PrimaryKey(autoGenerate = true)

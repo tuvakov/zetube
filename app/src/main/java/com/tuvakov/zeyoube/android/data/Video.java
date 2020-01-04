@@ -19,6 +19,8 @@ public class Video {
     private String title;
     private String thumbnail;
     private String description;
+    @ColumnInfo(name = "channel_id")
+    private String channelId;
     @ColumnInfo(name = "channel_title")
     private String channelTitle;
     @ColumnInfo(name = "channel_avatar")
@@ -34,12 +36,13 @@ public class Video {
     public Video() {}
 
     public Video(String title, String thumbnail, String description,
-                 String channelTitle, String channelAvatar, String videoId,
+                 String channelId, String channelTitle, String channelAvatar, String videoId,
                  boolean isSeen, long publishedAt) {
 
         this.title = title;
         this.thumbnail = thumbnail;
         this.description = description;
+        this.channelId = channelId;
         this.channelTitle = channelTitle;
         this.channelAvatar = channelAvatar;
         this.videoId = videoId;
@@ -77,6 +80,14 @@ public class Video {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getChannelId() {
+        return channelId;
+    }
+
+    public void setChannelId(String channelId) {
+        this.channelId = channelId;
     }
 
     public String getChannelTitle() {
@@ -133,7 +144,7 @@ public class Video {
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getVideoId());
+        return Objects.hash(getId(), getVideoId(), getChannelId());
     }
 
     @Override

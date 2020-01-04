@@ -45,6 +45,10 @@ public class SubscriptionRepo {
         mDiskIO.execute(mSubscriptionDao::deleteAll);
     }
 
+    public void deleteAllForService() {
+        mSubscriptionDao.deleteAll();
+    }
+
     public LiveData<List<Subscription>> getAllSubscriptions() {
         return mAllSubscriptions;
     }

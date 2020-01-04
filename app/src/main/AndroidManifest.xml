@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".VideoFeedScratchSyncService" android:exported="false" />
+        <service android:name=".VideoFeedSyncService" android:exported="false" />
 
     </application>
 

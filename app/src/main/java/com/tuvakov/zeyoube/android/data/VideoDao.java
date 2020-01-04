@@ -13,7 +13,7 @@ import java.util.List;
 @Dao
 public interface VideoDao {
 
-    @Query("SELECT * FROM videos")
+    @Query("SELECT * FROM videos ORDER BY published_at DESC")
     LiveData<List<Video>> selectAllVideos();
 
     @Insert

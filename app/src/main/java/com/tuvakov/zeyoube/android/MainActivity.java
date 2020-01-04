@@ -26,10 +26,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.tuvakov.zeyoube.android.utils.DateTimeUtils;
 import com.tuvakov.zeyoube.android.utils.PrefUtils;
 import com.tuvakov.zeyoube.android.utils.YouTubeApiUtils;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
@@ -54,6 +54,8 @@ public class MainActivity extends AppCompatActivity
     YouTubeApiUtils mYouTubeApiUtils;
     @Inject
     PrefUtils mPrefUtils;
+    @Inject
+    DateTimeUtils mDateTimeUtils;
 
     private GoogleAccountCredential mCredential;
     private MainViewModel mMainViewModel;
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity
 
         ((ZeYouBe) getApplication()).getAppComponent().injectMainActivityFields(this);
 
-
         mProgressBar = findViewById(R.id.progress_circular);
         mTextViewFeedback = findViewById(R.id.tv_feedback);
 
@@ -84,10 +85,11 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setAdapter(videoFeedAdapter);
 
         /* Setup the ViewModel and start observing */
-        mMainViewModel = ViewModelProviders.of(this, mMainViewModelFactory).get(MainViewModel.class);
+        mMainViewModel =
+                ViewModelProviders.of(this, mMainViewModelFactory).get(MainViewModel.class);
         mMainViewModel.getVideoFeed().observe(this, videos -> {
 
-            if (!hasContactsPermission() || mPrefUtils.isFromScratchSync()) {
+            if (!hasContactsPermission()) {
                 showMessage(R.string.msg_permission_get_accounts, View.GONE);
                 return;
             }
@@ -97,11 +99,6 @@ public class MainActivity extends AppCompatActivity
                 return;
             }
 
-            Collections.sort(videos, (o1, o2) -> o1.getLocalDateTimePublishedAt()
-                    .compareTo(o2.getLocalDateTimePublishedAt())
-            );
-
-            Collections.reverse(videos);
             videoFeedAdapter.submitList(videos);
 
             showRecyclerView();
@@ -110,24 +107,26 @@ public class MainActivity extends AppCompatActivity
         });
 
         /* Observe and react sync status */
-        VideoFeedScratchSyncService.STATUS.observe(this, status -> {
-            if (status == VideoFeedScratchSyncService.STATUS_SYNC_STARTED) {
+        VideoFeedSyncService.STATUS.observe(this, status -> {
+            if (status == VideoFeedSyncService.STATUS_SYNC_STARTED) {
                 showMessage(R.string.msg_info_sync_start, View.VISIBLE);
             } else {
                 if (!hasContactsPermission()) {
                     showMessage(R.string.msg_permission_get_accounts, View.GONE);
                     clearUpData();
                 }
-                if (status == VideoFeedScratchSyncService.STATUS_SYNC_SUCCESS) {
+                if (status == VideoFeedSyncService.STATUS_SYNC_SUCCESS) {
                     showRecyclerView();
-                } else if (status == VideoFeedScratchSyncService.STATUS_SYNC_FAILURE) {
+                } else if (status == VideoFeedSyncService.STATUS_SYNC_FAILURE) {
                     showMessage(R.string.msg_error_sync_failure, View.GONE);
                 }
+
+                mMainViewModel.setIsSyncing(false);
             }
         });
 
         mCredential = mYouTubeApiUtils.getGoogleCredential();
-        startCheckUpChain();
+        startSyncChain();
     }
 
     @Override
@@ -140,10 +139,21 @@ public class MainActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_all_videos:
-                mMainViewModel.deleteAllVideos();
-                startCheckUpChain();
+                clearUpData();
                 return true;
             case R.id.menu_item_update_video_feed:
+                if (mMainViewModel.isSyncing()) {
+                    Toast.makeText(this, R.string.msg_info_already_syncing,
+                            Toast.LENGTH_SHORT).show();
+                    return true;
+                }
+                else if (!hasDayPassed()) {
+                    Toast.makeText(this, getString(R.string.msg_info_sync_not_allowed),
+                            Toast.LENGTH_LONG).show();
+                    return true;
+                }
+                startSyncChain();
+                return true;
             default:
                 return true;
         }
@@ -170,7 +180,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, R.string.msg_warning_install_google_play_services,
                             Toast.LENGTH_SHORT).show();
                 } else {
-                    startCheckUpChain();
+                    startSyncChain();
                 }
                 break;
             case REQUEST_ACCOUNT_PICKER:
@@ -178,14 +188,15 @@ public class MainActivity extends AppCompatActivity
                     String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
                     if (accountName != null) {
                         mPrefUtils.saveAccountName(accountName);
-                        mCredential.setSelectedAccountName(accountName);
-                        startCheckUpChain();
+                        startSyncChain();
                     }
                 }
                 break;
             case REQUEST_AUTHORIZATION:
                 if (resultCode == RESULT_OK) {
-                    startCheckUpChain();
+                    startSyncChain();
+                } else {
+                    showMessage(R.string.msg_permission_get_accounts, View.GONE);
                 }
                 break;
         }
@@ -218,8 +229,6 @@ public class MainActivity extends AppCompatActivity
     public void onPermissionsDenied(int requestCode, List<String> perms) {
         Log.d(TAG, "onPermissionsDenied: ");
         showMessage(R.string.msg_permission_get_accounts, View.GONE);
-        clearUpData();
-        /* TODO: Add button to permission settings later */
     }
 
     /**
@@ -229,16 +238,17 @@ public class MainActivity extends AppCompatActivity
      * of the preconditions are not satisfied, the app will prompt the user as
      * appropriate.
      */
-    private void startCheckUpChain() {
+    private void startSyncChain() {
 
         if (!isGooglePlayServicesAvailable()) {
             acquireGooglePlayServices();
-        } else if (mCredential.getSelectedAccount() == null) {
+        } else if (mPrefUtils.getAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            Toast.makeText(this, R.string.msg_warning_no_network, Toast.LENGTH_SHORT).show();
-        } else if (mPrefUtils.isFromScratchSync()) {
-            Intent intent = new Intent(this, VideoFeedScratchSyncService.class);
+            showMessage( R.string.msg_warning_no_network, View.GONE);
+        } else if (hasDayPassed()) {
+            mMainViewModel.setIsSyncing(true);
+            Intent intent = new Intent(this, VideoFeedSyncService.class);
             startService(intent);
         }
     }
@@ -256,12 +266,9 @@ public class MainActivity extends AppCompatActivity
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private void chooseAccount() {
         if (hasContactsPermission()) {
-
             String accountName = mPrefUtils.getAccountName();
-
             if (accountName != null) {
-                mCredential.setSelectedAccountName(accountName);
-                startCheckUpChain();
+                startSyncChain();
             } else {
                 // Start a dialog from which the user can choose an account
                 startActivityForResult(
@@ -346,10 +353,14 @@ public class MainActivity extends AppCompatActivity
         return EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS);
     }
 
+    private boolean hasDayPassed() {
+        return mDateTimeUtils.hasDayPassed(mPrefUtils.getLastSyncTime());
+    }
+
     private void clearUpData() {
         mPrefUtils.deleteAccountName();
+        mPrefUtils.saveLastSyncTime(0);
         mMainViewModel.deleteAllVideos();
         mMainViewModel.deleteAllSubscriptions();
-        mPrefUtils.setIsFromScratchSync(true);
     }
 }

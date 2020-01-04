@@ -17,11 +17,17 @@
     <string name="msg_info_sync_start">
         Preparing your subscription feed. Please wait for a moment!
     </string>
-    <string name="msg_success_sync_success"> Sync completed successfully. </string>
+    <string name="msg_success_sync_success"> Sync has been completed successfully. </string>
     <string name="msg_permission_get_accounts">
         This app needs to access your Google account (via Contacts) in order to fetch your YouTube
         subscription feed.
     </string>
     <string name="msg_info_empty_result_set">Empty result set.</string>
-    <string name="msg_info_restart_or_man_sync">Please restart the app or press manual sync button at the top of the screen.</string>
+    <string name="msg_info_restart_or_man_sync">
+        Please restart the app or press manual sync button at the top of the screen.
+    </string>
+    <string name="msg_info_sync_not_allowed">
+        Sync is allowed once in 24 hours. Please try again later.
+    </string>
+    <string name="msg_info_already_syncing">Already syncing.</string>
 </resources>

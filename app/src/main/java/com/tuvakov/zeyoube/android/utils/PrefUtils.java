@@ -9,7 +9,7 @@ import javax.inject.Singleton;
 public class PrefUtils {
 
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String PREF_IS_FROM_SCRATCH_SYNC = "isFromScratchSync";
+    private static final String PREF_LAST_SYNC_TIME = "lastSyncTime";
 
     private final SharedPreferences mSharedPreferences;
 
@@ -18,16 +18,6 @@ public class PrefUtils {
         mSharedPreferences = sharedPreferences;
     }
 
-    public boolean isFromScratchSync() {
-        return mSharedPreferences.getBoolean(PREF_IS_FROM_SCRATCH_SYNC, true);
-    }
-
-    public  void setIsFromScratchSync(boolean value) {
-        SharedPreferences.Editor editor = mSharedPreferences.edit();
-        editor.putBoolean(PREF_IS_FROM_SCRATCH_SYNC, value);
-        editor.apply();
-        editor.commit();
-    }
 
     public String getAccountName() {
         return mSharedPreferences.getString(PREF_ACCOUNT_NAME, null);
@@ -41,5 +31,15 @@ public class PrefUtils {
 
     public void deleteAccountName() {
         saveAccountName(null);
+    }
+
+    public long getLastSyncTime() {
+        return mSharedPreferences.getLong(PREF_LAST_SYNC_TIME, 0);
+    }
+
+    public void saveLastSyncTime(long lastSyncTime) {
+        SharedPreferences.Editor editor = mSharedPreferences.edit();
+        editor.putLong(PREF_LAST_SYNC_TIME, lastSyncTime);
+        editor.apply();
     }
 }

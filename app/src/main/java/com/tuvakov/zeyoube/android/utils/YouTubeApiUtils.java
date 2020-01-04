@@ -67,7 +67,7 @@ public class YouTubeApiUtils {
             long first = o1.getSnippet().getPublishedAt().getValue();
             long second = o2.getSnippet().getPublishedAt().getValue();
             // Reverse order
-            return (int) (second - first);
+            return Long.compare(second, first);
         }
     }
 }

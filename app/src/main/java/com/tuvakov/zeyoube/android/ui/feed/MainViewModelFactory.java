@@ -1,4 +1,4 @@
-package com.tuvakov.zeyoube.android;
+package com.tuvakov.zeyoube.android.ui.feed;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;

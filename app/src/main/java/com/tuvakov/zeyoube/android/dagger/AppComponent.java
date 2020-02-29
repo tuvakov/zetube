@@ -1,7 +1,8 @@
 package com.tuvakov.zeyoube.android.dagger;
 
-import com.tuvakov.zeyoube.android.MainActivity;
 import com.tuvakov.zeyoube.android.VideoFeedSyncService;
+import com.tuvakov.zeyoube.android.ui.feed.VideoFeedActivity;
+import com.tuvakov.zeyoube.android.ui.player.PlayerActivity;
 
 import javax.inject.Singleton;
 
@@ -11,7 +12,9 @@ import dagger.Component;
 @Component(modules = {AppModule.class, RoomModule.class, ExecutorModule.class})
 public interface AppComponent {
 
-    void injectMainActivityFields(MainActivity mainActivity);
+    void injectVideoFeedActivityFields(VideoFeedActivity videoFeedActivity);
+
+    void injectPlayerActivityFields(PlayerActivity playerActivity);
 
     void injectVideoFeedSyncService(VideoFeedSyncService service);
 

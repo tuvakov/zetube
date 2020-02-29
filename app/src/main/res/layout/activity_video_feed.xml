@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="@dimen/padding_activity"
-    tools:context=".MainActivity">
+    tools:context=".ui.feed.VideoFeedActivity">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_video_feed"

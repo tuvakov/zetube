@@ -16,6 +16,9 @@ public interface VideoDao {
     @Query("SELECT * FROM videos ORDER BY published_at DESC")
     LiveData<List<Video>> selectAllVideos();
 
+    @Query("SELECT * FROM videos WHERE id = :id")
+    Video getVideoById(int id);
+
     @Insert
     void insert(Video video);
 

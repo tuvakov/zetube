@@ -10,6 +10,9 @@
         Something went wrong try again later by manual sync using the button top right corner or
         relaunching the app after killing.
     </string>
+    <string name="msg_error_no_video">
+        Cannot load the video. Please go back the video feed screen and try again.
+    </string>
     <string name="msg_warning_install_google_play_services">
         Please install Google Play Services.
     </string>

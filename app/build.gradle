@@ -24,42 +24,77 @@ android {
 }
 
 dependencies {
-    def room_version = "2.2.2"
-    def lifecycle_version = "2.1.0"
-    def dagger_version = "2.25.2"
 
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation "androidx.preference:preference:1.1.0"
-    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
-    implementation "com.google.android.material:material:1.2.0-alpha03"
-    implementation "androidx.room:room-runtime:$room_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
-    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    implementation 'com.google.android.gms:play-services-auth:17.0.0'
-    implementation('com.google.api-client:google-api-client-android:1.25.0') {
+
+    def appcompat = '1.1.0'
+    implementation "androidx.appcompat:appcompat:$appcompat"
+
+    def preference = '1.1.0'
+    implementation "androidx.preference:preference:$preference"
+
+    def constraintLayout = '1.1.3'
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayout"
+
+    def material = '1.2.0-alpha05'
+    implementation "com.google.android.material:material:$material"
+
+    def room = '2.2.4'
+    implementation "androidx.room:room-runtime:$room"
+    annotationProcessor "androidx.room:room-compiler:$room"
+
+    def lifecycle = '2.2.0'
+    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle"
+    implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
+
+    /* YouTube Data Api related dependencies */
+    def playServices = '17.0.0'
+    implementation "com.google.android.gms:play-services-auth:$playServices"
+
+    def googleApiClient = '1.25.0'
+    implementation("com.google.api-client:google-api-client-android:$googleApiClient") {
         exclude group: 'org.apache.httpcomponents'
     }
-    implementation('com.google.apis:google-api-services-youtube:v3-rev212-1.25.0') {
+
+    def youtubeDataV3 = 'rev212-1.25.0'
+    implementation("com.google.apis:google-api-services-youtube:v3-$youtubeDataV3") {
         exclude group: 'org.apache.httpcomponents'
     }
 
-    testImplementation 'junit:junit:4.12'
-    testImplementation "androidx.room:room-testing:$room_version"
-    testImplementation "androidx.arch.core:core-testing:$lifecycle_version"
-    androidTestImplementation 'androidx.test:runner:1.2.0'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
-    testImplementation 'org.mockito:mockito-core:3.2.4'
+    /* Third party libraries */
+
+    def player = '10.0.5'
+    implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:$player"
 
 
+    def threetenBp = '1.2.1'
+    implementation "com.jakewharton.threetenabp:threetenabp:$threetenBp"
 
-    // Third party libraries */
-    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
-    implementation 'com.github.bumptech.glide:glide:4.10.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
-    implementation 'pub.devrel:easypermissions:0.3.0'
-    implementation "com.google.dagger:dagger:$dagger_version"
-    annotationProcessor "com.google.dagger:dagger-compiler:$dagger_version"
+    def glide = '4.11.0'
+    implementation "com.github.bumptech.glide:glide:$glide"
+    annotationProcessor "com.github.bumptech.glide:compiler:$glide"
+
+    def easyPermissions = '3.0.0'
+    implementation "pub.devrel:easypermissions:$easyPermissions"
+
+    def dagger = '2.25.2'
+    implementation "com.google.dagger:dagger:$dagger"
+    annotationProcessor "com.google.dagger:dagger-compiler:$dagger"
+
+    testImplementation "androidx.room:room-testing:$room"
+
+    def junit = '4.13'
+    testImplementation "junit:junit:$junit"
+
+    def mockito = '3.2.4'
+    testImplementation "org.mockito:mockito-core:$mockito"
+
+    def androidTestRunner = '1.2.0'
+    androidTestImplementation "androidx.test:runner:$androidTestRunner"
+
+    def androidJunit = '1.1.1'
+    androidTestImplementation "androidx.test.ext:junit:$androidJunit"
+
+    def espresso = '3.2.0'
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 }

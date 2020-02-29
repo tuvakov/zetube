@@ -6,7 +6,7 @@ import com.tuvakov.zeyoube.android.data.Subscription;
 import com.tuvakov.zeyoube.android.data.SubscriptionDao;
 
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,11 +15,11 @@ import javax.inject.Singleton;
 public class SubscriptionRepo {
 
     private final SubscriptionDao mSubscriptionDao;
-    private final Executor mDiskIO;
+    private final ExecutorService mDiskIO;
     private LiveData<List<Subscription>> mAllSubscriptions;
 
     @Inject
-    public SubscriptionRepo(SubscriptionDao subscriptionDao, Executor diskIO) {
+    public SubscriptionRepo(SubscriptionDao subscriptionDao, ExecutorService diskIO) {
         mSubscriptionDao = subscriptionDao;
         mDiskIO = diskIO;
         mAllSubscriptions = mSubscriptionDao.selectAll();

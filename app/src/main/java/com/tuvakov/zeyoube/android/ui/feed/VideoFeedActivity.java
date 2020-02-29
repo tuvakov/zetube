@@ -1,4 +1,4 @@
-package com.tuvakov.zeyoube.android;
+package com.tuvakov.zeyoube.android.ui.feed;
 
 import android.Manifest;
 import android.accounts.AccountManager;
@@ -19,13 +19,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.tuvakov.zeyoube.android.R;
+import com.tuvakov.zeyoube.android.VideoFeedSyncService;
+import com.tuvakov.zeyoube.android.ZeYouBe;
+import com.tuvakov.zeyoube.android.ui.player.PlayerActivity;
 import com.tuvakov.zeyoube.android.utils.DateTimeUtils;
 import com.tuvakov.zeyoube.android.utils.PrefUtils;
 import com.tuvakov.zeyoube.android.utils.YouTubeApiUtils;
@@ -38,7 +42,7 @@ import javax.inject.Inject;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-public class MainActivity extends AppCompatActivity
+public class VideoFeedActivity extends AppCompatActivity
         implements EasyPermissions.PermissionCallbacks {
 
     private static final int REQUEST_ACCOUNT_PICKER = 1000;
@@ -46,7 +50,7 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_GOOGLE_PLAY_SERVICES = 1002;
     private static final int REQUEST_PERMISSION_GET_ACCOUNTS = 1003;
 
-    private static final String TAG = "MainActivity";
+    private static final String TAG = "VideoFeedActivity";
 
     @Inject
     MainViewModelFactory mMainViewModelFactory;
@@ -69,9 +73,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_video_feed);
 
-        ((ZeYouBe) getApplication()).getAppComponent().injectMainActivityFields(this);
+        ((ZeYouBe) getApplication()).getAppComponent().injectVideoFeedActivityFields(this);
 
         mProgressBar = findViewById(R.id.progress_circular);
         mTextViewFeedback = findViewById(R.id.tv_feedback);
@@ -82,11 +86,17 @@ public class MainActivity extends AppCompatActivity
         mRecyclerView.setHasFixedSize(true);
 
         VideoFeedAdapter videoFeedAdapter = new VideoFeedAdapter();
+        videoFeedAdapter.setItemClickListener(video -> {
+            Intent intent = new Intent(this, PlayerActivity.class);
+            intent.putExtra(PlayerActivity.KEY_EXTRA_VIDEO_ID, video.getId());
+            startActivity(intent);
+        });
+
         mRecyclerView.setAdapter(videoFeedAdapter);
 
         /* Setup the ViewModel and start observing */
-        mMainViewModel =
-                ViewModelProviders.of(this, mMainViewModelFactory).get(MainViewModel.class);
+        mMainViewModel = new ViewModelProvider(this, mMainViewModelFactory)
+                .get(MainViewModel.class);
         mMainViewModel.getVideoFeed().observe(this, videos -> {
 
             if (!hasContactsPermission()) {
@@ -146,8 +156,7 @@ public class MainActivity extends AppCompatActivity
                     Toast.makeText(this, R.string.msg_info_already_syncing,
                             Toast.LENGTH_SHORT).show();
                     return true;
-                }
-                else if (!hasDayPassed()) {
+                } else if (!hasDayPassed()) {
                     Toast.makeText(this, getString(R.string.msg_info_sync_not_allowed),
                             Toast.LENGTH_LONG).show();
                     return true;
@@ -245,7 +254,7 @@ public class MainActivity extends AppCompatActivity
         } else if (mPrefUtils.getAccountName() == null) {
             chooseAccount();
         } else if (!isDeviceOnline()) {
-            showMessage( R.string.msg_warning_no_network, View.GONE);
+            showMessage(R.string.msg_warning_no_network, View.GONE);
         } else if (hasDayPassed()) {
             mMainViewModel.setIsSyncing(true);
             Intent intent = new Intent(this, VideoFeedSyncService.class);
@@ -329,7 +338,7 @@ public class MainActivity extends AppCompatActivity
     private void showGooglePlayServicesAvailabilityErrorDialog(final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
-                MainActivity.this,
+                VideoFeedActivity.this,
                 connectionStatusCode,
                 REQUEST_GOOGLE_PLAY_SERVICES
         );

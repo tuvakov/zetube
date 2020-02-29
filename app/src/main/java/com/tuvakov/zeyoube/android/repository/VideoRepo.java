@@ -6,7 +6,9 @@ import com.tuvakov.zeyoube.android.data.Video;
 import com.tuvakov.zeyoube.android.data.VideoDao;
 
 import java.util.List;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -15,11 +17,11 @@ import javax.inject.Singleton;
 public class VideoRepo {
 
     private final VideoDao mVideoDao;
-    private final Executor mDiskIO;
+    private final ExecutorService mDiskIO;
     private LiveData<List<Video>> mAllVideos;
 
     @Inject
-    public VideoRepo(VideoDao videoDao, Executor diskIO) {
+    public VideoRepo(VideoDao videoDao, ExecutorService diskIO) {
         mVideoDao = videoDao;
         mDiskIO = diskIO;
         mAllVideos = mVideoDao.selectAllVideos();
@@ -51,5 +53,15 @@ public class VideoRepo {
 
     public LiveData<List<Video>> getAllVideos() {
         return mAllVideos;
+    }
+
+    public Video getVideoById(int id) {
+        Future<Video> video = mDiskIO.submit(() -> mVideoDao.getVideoById(id));
+        try {
+            return video.get();
+        } catch (ExecutionException | InterruptedException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }

@@ -1,8 +1,8 @@
-package com.tuvakov.zeyoube.android;
+package com.tuvakov.zeyoube.android.ui.feed;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,11 +15,8 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.tuvakov.zeyoube.android.R;
 import com.tuvakov.zeyoube.android.data.Video;
-
-import org.threeten.bp.format.DateTimeFormatter;
-import org.threeten.bp.format.FormatStyle;
-
 
 public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoViewHolder> {
 
@@ -69,10 +66,7 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
 
         holder.textViewInfo.setText(String.format("%s \u2022 ", currentVideo.getChannelTitle()));
         holder.textViewTitle.setText(currentVideo.getTitle());
-        String publishedAt = currentVideo.getLocalDateTimePublishedAt()
-                .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM));
-        Log.d(TAG, "onBindViewHolder: " + currentVideo.getLocalDateTimePublishedAt());
-        holder.textViewInfo.append(publishedAt);
+        holder.textViewInfo.append(DateUtils.getRelativeTimeSpanString(currentVideo.getPublishedAt()));
     }
 
 
@@ -109,6 +103,6 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
     }
 
     public interface ItemClickListener {
-        void onClick(Video note);
+        void onClick(Video video);
     }
 }

@@ -1,4 +1,4 @@
-package com.tuvakov.zeyoube.android;
+package com.tuvakov.zeyoube.android.ui.feed;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.ViewModel;
@@ -9,13 +9,13 @@ import com.tuvakov.zeyoube.android.repository.VideoRepo;
 
 import java.util.List;
 
-class MainViewModel extends ViewModel {
+public class MainViewModel extends ViewModel {
 
     private SubscriptionRepo mSubscriptionRepo;
     private VideoRepo mVideoRepo;
-    private boolean mIsSyncing = false;
 
-    private static final String TAG = "MainViewModel";
+    private boolean mIsSyncing = false;
+    private Video cachedVideo;
 
     MainViewModel(SubscriptionRepo subscriptionRepo, VideoRepo videoRepo) {
         mSubscriptionRepo = subscriptionRepo;
@@ -32,6 +32,14 @@ class MainViewModel extends ViewModel {
 
     void deleteAllSubscriptions() {
         mSubscriptionRepo.deleteAll();
+    }
+
+    public Video getVideoById(int id) {
+        if (cachedVideo != null && cachedVideo.getId() == id) {
+            return cachedVideo;
+        }
+        cachedVideo = mVideoRepo.getVideoById(id);
+        return cachedVideo;
     }
 
     void setIsSyncing(boolean flag) {

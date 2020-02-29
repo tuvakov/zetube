@@ -44,27 +44,47 @@
         android:id="@+id/tv_video_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constrainedWidth="true"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_video_title"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/tv_video_title"
         app:layout_constraintTop_toBottomOf="@+id/tv_video_title"
         tools:text="Peter McKinnon - 6 hours ago" />
 
+    <Button
+        android:id="@+id/btn_share"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/btn_txt_share"
+        app:icon="@drawable/ic_share_black_24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_channel_avatar" />
+
+    <Button
+        android:id="@+id/btn_save"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/btn_txt_save"
+        app:icon="@drawable/ic_playlist_add_black_24dp"
+        app:layout_constraintStart_toEndOf="@id/btn_share"
+        app:layout_constraintTop_toTopOf="@id/btn_share" />
+
     <ScrollView
         android:id="@+id/sv_description_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="4dp"
         android:paddingStart="8dp"
-        android:paddingTop="8dp"
         android:paddingEnd="8dp"
         android:paddingBottom="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHeight_default="spread"
-        app:layout_constraintTop_toBottomOf="@+id/tv_video_info"
+        app:layout_constraintTop_toBottomOf="@+id/btn_share"
         app:layout_constraintVertical_bias="0.0">
 
         <TextView

@@ -33,4 +33,9 @@
         Sync is allowed once in 24 hours. Please try again later.
     </string>
     <string name="msg_info_already_syncing">Already syncing.</string>
+
+    <!-- Button texts -->
+    <string name="btn_txt_share">Share</string>
+    <string name="btn_txt_save">Save</string>
+
 </resources>

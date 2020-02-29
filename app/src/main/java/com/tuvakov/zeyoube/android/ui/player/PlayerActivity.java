@@ -8,6 +8,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     public static final String KEY_EXTRA_VIDEO_ID = "video-id";
     private static final String TAG = "PlayerActivity";
+    private static final String VIDEO_BASE_LINK = "https://www.youtube.com/watch?v=";
 
     @Inject
     MainViewModelFactory mMainViewModelFactory;
@@ -47,9 +49,11 @@ public class PlayerActivity extends AppCompatActivity {
     private TextView mVideoInfo;
     private TextView mVideoDescription;
     private TextView mErrorMessage;
+    private Button mShareButton;
     private YouTubePlayerView mPlayerView;
 
     private FullScreenHelper mFullScreenHelper = new FullScreenHelper(this);
+    private String mVideoId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,8 +82,9 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
 
+        mVideoId = video.getVideoId();
         fillViews(video);
-        initYoutubePlayerView(video.getVideoId());
+        initYoutubePlayerView();
 
         /*
           If activity is created in landscape orientation,
@@ -89,6 +94,8 @@ public class PlayerActivity extends AppCompatActivity {
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
             mPlayerView.enterFullScreen();
         }
+
+        mShareButton.setOnClickListener(this::shareBtnClickListener);
     }
 
     @Override
@@ -107,7 +114,7 @@ public class PlayerActivity extends AppCompatActivity {
         }
     }
 
-    private void initYoutubePlayerView(String videoId) {
+    private void initYoutubePlayerView() {
         getLifecycle().addObserver(mPlayerView);
         mPlayerView.addYouTubePlayerListener(new AbstractYouTubePlayerListener() {
             @Override
@@ -115,7 +122,7 @@ public class PlayerActivity extends AppCompatActivity {
                 YouTubePlayerUtils.loadOrCueVideo(
                         youTubePlayer,
                         getLifecycle(),
-                        videoId,
+                        mVideoId,
                         0f
                 );
                 addFullScreenListenerToPlayer();
@@ -141,6 +148,7 @@ public class PlayerActivity extends AppCompatActivity {
 
     private void bindViews() {
         mChannelIcon = findViewById(R.id.iv_channel_avatar);
+        mShareButton = findViewById(R.id.btn_share);
         mVideoTitle = findViewById(R.id.tv_video_title);
         mVideoInfo = findViewById(R.id.tv_video_info);
         mVideoDescription = findViewById(R.id.tv_video_description);
@@ -176,5 +184,15 @@ public class PlayerActivity extends AppCompatActivity {
         mVideoInfo.setVisibility(View.GONE);
         mVideoDescription.setVisibility(View.GONE);
         mPlayerView.setVisibility(View.GONE);
+    }
+
+    private void shareBtnClickListener(View view) {
+        String videoLink = VIDEO_BASE_LINK + mVideoId;
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT, videoLink);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
     }
 }

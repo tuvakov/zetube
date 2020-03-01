@@ -26,9 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
 import com.tuvakov.zeyoube.android.R;
 import com.tuvakov.zeyoube.android.VideoFeedSyncService;
 import com.tuvakov.zeyoube.android.ZeYouBe;
+import com.tuvakov.zeyoube.android.data.SyncStatus;
 import com.tuvakov.zeyoube.android.ui.player.PlayerActivity;
 import com.tuvakov.zeyoube.android.utils.DateTimeUtils;
 import com.tuvakov.zeyoube.android.utils.PrefUtils;
@@ -104,6 +107,10 @@ public class VideoFeedActivity extends AppCompatActivity
                 return;
             }
 
+            if (mMainViewModel.isSyncing()) {
+                return;
+            }
+
             if (videos.size() == 0) {
                 showMessage(R.string.msg_info_empty_result_set, View.GONE);
                 return;
@@ -117,23 +124,7 @@ public class VideoFeedActivity extends AppCompatActivity
         });
 
         /* Observe and react sync status */
-        VideoFeedSyncService.STATUS.observe(this, status -> {
-            if (status == VideoFeedSyncService.STATUS_SYNC_STARTED) {
-                showMessage(R.string.msg_info_sync_start, View.VISIBLE);
-            } else {
-                if (!hasContactsPermission()) {
-                    showMessage(R.string.msg_permission_get_accounts, View.GONE);
-                    clearUpData();
-                }
-                if (status == VideoFeedSyncService.STATUS_SYNC_SUCCESS) {
-                    showRecyclerView();
-                } else if (status == VideoFeedSyncService.STATUS_SYNC_FAILURE) {
-                    showMessage(R.string.msg_error_sync_failure, View.GONE);
-                }
-
-                mMainViewModel.setIsSyncing(false);
-            }
-        });
+        VideoFeedSyncService.STATUS.observe(this, this::handleSyncStatus);
 
         mCredential = mYouTubeApiUtils.getGoogleCredential();
         startSyncChain();
@@ -343,6 +334,50 @@ public class VideoFeedActivity extends AppCompatActivity
                 REQUEST_GOOGLE_PLAY_SERVICES
         );
         dialog.show();
+    }
+
+    private void handleSyncStatus(SyncStatus status) {
+        int resultCode = status.getResultCode();
+        if (resultCode == VideoFeedSyncService.STATUS_SYNC_STARTED) {
+            showMessage(R.string.msg_info_sync_start, View.VISIBLE);
+            return;
+        }
+
+        if (!hasContactsPermission()) {
+            setStatusIdle();
+            showMessage(R.string.msg_permission_get_accounts, View.GONE);
+            clearUpData();
+        }
+
+        switch (resultCode) {
+            case VideoFeedSyncService.STATUS_SYNC_SUCCESS:
+                setStatusIdle();
+                showRecyclerView();
+                break;
+            case VideoFeedSyncService.STATUS_SYNC_GOOGLE_PLAY_FAILURE:
+                int code = ((GooglePlayServicesAvailabilityIOException) status.getException())
+                        .getConnectionStatusCode();
+                showGooglePlayServicesAvailabilityErrorDialog(code);
+                setStatusIdle();
+                break;
+            case VideoFeedSyncService.STATUS_SYNC_AUTH_FAILURE:
+                Intent intent = ((UserRecoverableAuthIOException) status.getException()).getIntent();
+                startActivityForResult(intent, REQUEST_AUTHORIZATION);
+                setStatusIdle();
+                break;
+            case VideoFeedSyncService.STATUS_SYNC_FAILURE:
+                showMessage(R.string.msg_error_sync_failure, View.GONE);
+                setStatusIdle();
+                break;
+        }
+
+        mMainViewModel.setIsSyncing(false);
+    }
+
+    private void setStatusIdle() {
+        VideoFeedSyncService.STATUS.setValue(
+                new SyncStatus(VideoFeedSyncService.STATUS_SYNC_IDLE)
+        );
     }
 
     private void showRecyclerView() {

@@ -1,7 +1,5 @@
 package com.tuvakov.zeyoube.android.utils;
 
-import android.util.Log;
-
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.PlaylistItem;
 import com.google.api.services.youtube.model.PlaylistItemListResponse;
@@ -26,7 +24,6 @@ public class SyncUtils {
 
     private static final long MAX_LIMIT_SUBS = 50;
     private static final long MAX_LIMIT_VIDEOS = 15;
-
 
     @Inject
     public SyncUtils() { }
@@ -86,10 +83,7 @@ public class SyncUtils {
             // Originally the list is not sorted by timestamp java.util.ArrayList;
             Collections.sort(items, comparator);
 
-
             int added = mapVideos(items, subscription, videos, startingDay);
-            Log.d(TAG, "getVideoSyncTask: " + ++i + ". " + subscription.getTitle() +
-                    ": " + added);
 
             /* If all of the fetched videos were added then there might be more in the next page */
             while (added == MAX_LIMIT_VIDEOS) {
@@ -98,8 +92,6 @@ public class SyncUtils {
                 items = response.getItems();
                 Collections.sort(items, comparator);
                 added = mapVideos(items, subscription, videos, startingDay);
-                Log.d(TAG, "getVideoSyncTask: " + ++i + ". " + subscription.getTitle() +
-                        ": " + added);
             }
         }
         return videos;

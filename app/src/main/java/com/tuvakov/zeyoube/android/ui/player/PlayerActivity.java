@@ -34,6 +34,8 @@ import org.threeten.bp.format.FormatStyle;
 
 import javax.inject.Inject;
 
+// TODO: Check if device is offline
+
 public class PlayerActivity extends AppCompatActivity {
 
     public static final String VIDEO_BASE_LINK = "https://www.youtube.com/watch?v=";

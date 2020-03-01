@@ -36,9 +36,9 @@ import javax.inject.Inject;
 
 public class PlayerActivity extends AppCompatActivity {
 
+    public static final String VIDEO_BASE_LINK = "https://www.youtube.com/watch?v=";
     public static final String KEY_EXTRA_VIDEO_ID = "video-id";
     private static final String TAG = "PlayerActivity";
-    private static final String VIDEO_BASE_LINK = "https://www.youtube.com/watch?v=";
 
     @Inject
     MainViewModelFactory mMainViewModelFactory;

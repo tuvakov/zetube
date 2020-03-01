@@ -1,5 +1,6 @@
 package com.tuvakov.zeyoube.android.ui.feed;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.text.format.DateUtils;
@@ -7,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.tuvakov.zeyoube.android.R;
 import com.tuvakov.zeyoube.android.data.Video;
+
+import static com.tuvakov.zeyoube.android.ui.player.PlayerActivity.VIDEO_BASE_LINK;
 
 public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoViewHolder> {
 
@@ -69,15 +73,10 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
         holder.textViewInfo.append(DateUtils.getRelativeTimeSpanString(currentVideo.getPublishedAt()));
     }
 
-
-    public Video getVideoAt(int i) {
-        return getItem(i);
-    }
-
-
     public void setItemClickListener(ItemClickListener itemClickListener) {
         this.mItemClickListener = itemClickListener;
     }
+
 
     class VideoViewHolder extends RecyclerView.ViewHolder {
 
@@ -92,12 +91,33 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
             textViewTitle = itemView.findViewById(R.id.tv_video_title);
             textViewInfo = itemView.findViewById(R.id.tv_video_info);
             imageViewChannelAvatar = itemView.findViewById(R.id.iv_channel_avatar);
+            ImageView imageViewMore = itemView.findViewById(R.id.iv_more);
 
             itemView.setOnClickListener(view -> {
                 int position = getAdapterPosition();
-                if (mItemClickListener != null && position != RecyclerView.NO_POSITION) {
+                if (mItemClickListener != null) {
                     mItemClickListener.onClick(getItem(position));
                 }
+            });
+
+            imageViewMore.setOnClickListener(view -> {
+                PopupMenu popup = new PopupMenu(view.getContext(), view);
+                popup.setOnMenuItemClickListener(item -> {
+                    if (item.getItemId() == R.id.menu_item_share) {
+                        String videoId = getItem(getAdapterPosition()).getVideoId();
+                        String videoLink = VIDEO_BASE_LINK + videoId;
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType("text/plain");
+                        intent.putExtra(Intent.EXTRA_TEXT, videoLink);
+                        if (intent.resolveActivity(view.getContext().getPackageManager()) != null) {
+                            view.getContext().startActivity(intent);
+                        }
+                        return true;
+                    }
+                    return false;
+                });
+                popup.inflate(R.menu.popup_menu_feed_item);
+                popup.show();
             });
         }
     }

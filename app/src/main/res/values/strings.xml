@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ZeYouBe</string>
+    <string name="app_name">ZeTube</string>
 
     <!-- Image content descriptions -->
     <string name="content_description_video_thumbnail">Video Thumbnail</string>

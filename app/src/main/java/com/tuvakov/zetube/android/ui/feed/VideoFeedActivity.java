@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -141,7 +142,7 @@ public class VideoFeedActivity extends AppCompatActivity
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_item_delete_all_videos:
-                clearUpData();
+                showDeleteDialog();
                 return true;
             case R.id.menu_item_update_video_feed:
                 if (mMainViewModel.isSyncing()) {
@@ -407,5 +408,19 @@ public class VideoFeedActivity extends AppCompatActivity
         mPrefUtils.saveLastSyncTime(0);
         mMainViewModel.deleteAllVideos();
         mMainViewModel.deleteAllSubscriptions();
+    }
+
+    private void showDeleteDialog() {
+        /* Don't show the dialog if there is no data */
+        if (mPrefUtils.getAccountName() == null && mPrefUtils.getLastSyncTime() == 0) {
+            Toast.makeText(this, R.string.msg_no_data_to_delete, Toast.LENGTH_SHORT).show();
+            return;
+        }
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.ZeTubeAlertDialog);
+        builder.setMessage(R.string.msg_delete_dialog);
+        builder.setCancelable(true);
+        builder.setPositiveButton(R.string.btn_txt_confirm, (dialog, which) -> clearUpData());
+        builder.setNegativeButton(R.string.btn_txt_cancel, (dialog, which) -> dialog.cancel());
+        builder.create().show();
     }
 }

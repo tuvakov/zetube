@@ -33,10 +33,14 @@
         Sync is allowed once in 24 hours. Please try again later.
     </string>
     <string name="msg_info_already_syncing">Already syncing.</string>
+    <string name="msg_delete_dialog">Do you confirm deleting all of the data?</string>
+    <string name="msg_no_data_to_delete">No data to delete.</string>
 
     <!-- Button texts -->
     <string name="btn_txt_share">Share</string>
     <string name="btn_txt_save">Save</string>
+    <string name="btn_txt_confirm">Confirm</string>
+    <string name="btn_txt_cancel">Cancel</string>
 
     <!-- Menu item texts -->
     <string name="menu_item_update_feed">Update Feed</string>

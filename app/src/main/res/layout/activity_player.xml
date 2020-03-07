@@ -55,12 +55,9 @@
 
     <Button
         android:id="@+id/btn_share"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ZeTubeTextButton"
         android:layout_marginTop="8dp"
         android:text="@string/btn_txt_share"
-        android:textColor="@color/colorAccent"
         app:icon="@drawable/ic_share_black_24dp"
         app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
@@ -68,12 +65,9 @@
 
     <Button
         android:id="@+id/btn_save"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/ZeTubeTextButton"
         android:text="@string/btn_txt_save"
         android:visibility="gone"
-        android:textColor="@color/colorAccent"
         app:icon="@drawable/ic_playlist_add_black_24dp"
         app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toEndOf="@id/btn_share"

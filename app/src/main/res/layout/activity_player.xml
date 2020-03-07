@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/primaryDarkColor"
     tools:context=".ui.player.PlayerActivity">
 
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -32,7 +33,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
-        android:textColor="@android:color/black"
         app:layout_constrainedWidth="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -60,7 +60,9 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="@string/btn_txt_share"
+        android:textColor="@color/colorAccent"
         app:icon="@drawable/ic_share_black_24dp"
+        app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_channel_avatar" />
 
@@ -70,7 +72,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/btn_txt_save"
+        android:visibility="gone"
+        android:textColor="@color/colorAccent"
         app:icon="@drawable/ic_playlist_add_black_24dp"
+        app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toEndOf="@id/btn_share"
         app:layout_constraintTop_toTopOf="@id/btn_share" />
 

@@ -77,6 +77,7 @@ public class VideoFeedActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_feed);
+        Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
         ((ZeYouBe) getApplication()).getAppComponent().injectVideoFeedActivityFields(this);
 

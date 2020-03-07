@@ -38,4 +38,8 @@
     <string name="btn_txt_share">Share</string>
     <string name="btn_txt_save">Save</string>
 
+    <!-- Menu item texts -->
+    <string name="menu_item_update_feed">Update Feed</string>
+    <string name="menu_item_delete_all">Delete All</string>
+
 </resources>

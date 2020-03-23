@@ -70,13 +70,13 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
 
-        int videoDbId = getIntent().getIntExtra(KEY_EXTRA_VIDEO_ID, -1);
+        String videoId = getIntent().getStringExtra(KEY_EXTRA_VIDEO_ID);
 
         ((ZeYouBe) getApplication()).getAppComponent().injectPlayerActivityFields(this);
         MainViewModel mMainViewModel = new ViewModelProvider(this, mMainViewModelFactory)
                 .get(MainViewModel.class);
 
-        Video video = mMainViewModel.getVideoById(videoDbId);
+        Video video = mMainViewModel.getVideoById(videoId);
 
         if (video == null) {
             Log.d(TAG, "onCreate: Video is null");
@@ -84,7 +84,7 @@ public class PlayerActivity extends AppCompatActivity {
             return;
         }
 
-        mVideoId = video.getVideoId();
+        mVideoId = video.getId();
         fillViews(video);
         initYoutubePlayerView();
 

@@ -17,7 +17,7 @@ public interface VideoDao {
     LiveData<List<Video>> selectAllVideos();
 
     @Query("SELECT * FROM videos WHERE id = :id")
-    Video getVideoById(int id);
+    Video getVideoById(String id);
 
     @Insert
     void insert(Video video);

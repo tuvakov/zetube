@@ -8,6 +8,7 @@
         <item name="android:statusBarColor">@color/primaryColor</item>
         <item name="android:textColor">@color/primaryTextColor</item>
         <item name="android:itemBackground">@color/primaryColor</item>
+        <item name="android:navigationBarColor">@color/primaryColor</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

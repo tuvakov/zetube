@@ -127,31 +127,22 @@ public class SyncUtilsTest {
                 "UC6T6XySnZS2Gghs7xQk8yZg",
                 "AdoramaTv",
                 "A channel about photography",
-                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs",
-                "etag"
+                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs"
         );
 
         Subscription threeBrownOneBlue = new Subscription(
                 "UCYO_jab_esuFRV4b17AJtAw",
                 "3Brown1Blue",
                 "A channel about numbers",
-                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs",
-                "etag"
+                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs"
         );
 
         Subscription tasty = new Subscription(
                 "UCJFp8uSYCjXOMnkUyb3CQ3Q",
                 "Tasty",
                 "A channel about cooking",
-                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs",
-                "etag"
+                "https://yt3.ggpht.com/-1Y8x3MKEQJA/AAAAAAAAAAI/AAAAAAAAAAA/QIjFzrRKiHs"
         );
-
-        adorama.setId(1);
-        threeBrownOneBlue.setId(2);
-        tasty.setId(3);
-
         return Arrays.asList(adorama, threeBrownOneBlue, tasty);
     }
-
 }

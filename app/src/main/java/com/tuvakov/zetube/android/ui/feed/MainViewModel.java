@@ -34,11 +34,11 @@ public class MainViewModel extends ViewModel {
         mSubscriptionRepo.deleteAll();
     }
 
-    public Video getVideoById(int id) {
-        if (cachedVideo != null && cachedVideo.getId() == id) {
+    public Video getVideoById(String getVideoId) {
+        if (cachedVideo != null && cachedVideo.getId().equals(getVideoId)) {
             return cachedVideo;
         }
-        cachedVideo = mVideoRepo.getVideoById(id);
+        cachedVideo = mVideoRepo.getVideoById(getVideoId);
         return cachedVideo;
     }
 

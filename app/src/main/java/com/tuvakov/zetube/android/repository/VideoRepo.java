@@ -55,8 +55,8 @@ public class VideoRepo {
         return mAllVideos;
     }
 
-    public Video getVideoById(int id) {
-        Future<Video> video = mDiskIO.submit(() -> mVideoDao.getVideoById(id));
+    public Video getVideoById(String videoId) {
+        Future<Video> video = mDiskIO.submit(() -> mVideoDao.getVideoById(videoId));
         try {
             return video.get();
         } catch (ExecutionException | InterruptedException e) {

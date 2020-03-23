@@ -31,14 +31,14 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
         super(new DiffUtil.ItemCallback<Video>() {
             @Override
             public boolean areItemsTheSame(@NonNull Video oldItem, @NonNull Video newItem) {
-                return oldItem.getId() == newItem.getId();
+                return oldItem.getId().equals(newItem.getId());
             }
 
             @Override
             public boolean areContentsTheSame(@NonNull Video oldItem, @NonNull Video newItem) {
                 return oldItem.getTitle().equals(newItem.getTitle())
                         && oldItem.getDescription().equals(newItem.getDescription())
-                        && oldItem.getVideoId().equals(newItem.getVideoId());
+                        && oldItem.getPublishedAt() == newItem.getPublishedAt();
             }
         });
     }
@@ -104,7 +104,7 @@ public class VideoFeedAdapter extends ListAdapter<Video, VideoFeedAdapter.VideoV
                 PopupMenu popup = new PopupMenu(view.getContext(), view);
                 popup.setOnMenuItemClickListener(item -> {
                     if (item.getItemId() == R.id.menu_item_share) {
-                        String videoId = getItem(getAdapterPosition()).getVideoId();
+                        String videoId = getItem(getAdapterPosition()).getId();
                         String videoLink = VIDEO_BASE_LINK + videoId;
                         Intent intent = new Intent(Intent.ACTION_SEND);
                         intent.setType("text/plain");

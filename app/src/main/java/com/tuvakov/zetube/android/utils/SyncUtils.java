@@ -68,8 +68,7 @@ public class SyncUtils {
         List<Video> videos = new ArrayList<>();
         for (Subscription subscription : subscriptions) {
 
-            String uploadPlayListId =
-                    subscription.getChannelId().replaceFirst("[C]", "U");
+            String uploadPlayListId = subscription.getId().replaceFirst("[C]", "U");
 
             YouTube.PlaylistItems.List list = youTubeService.playlistItems()
                     .list("snippet")
@@ -105,8 +104,7 @@ public class SyncUtils {
                     snippet.getResourceId().getChannelId(),
                     snippet.getTitle(),
                     snippet.getDescription(),
-                    snippet.getThumbnails().getMedium().getUrl(),
-                    sub.getEtag())
+                    snippet.getThumbnails().getMedium().getUrl())
             );
         }
     }
@@ -118,13 +116,14 @@ public class SyncUtils {
             PlaylistItemSnippet snippet = item.getSnippet();
             if (snippet.getPublishedAt().getValue() < startingDate) break;
             videos.add(new Video(
+                    snippet.getResourceId().getVideoId(),
                     snippet.getTitle(),
                     snippet.getThumbnails().getHigh().getUrl(),
                     snippet.getDescription(),
-                    subscription.getChannelId(),
+                    subscription.getId(),
                     subscription.getTitle(),
                     subscription.getThumbnail(),
-                    snippet.getResourceId().getVideoId(),
+                    false,
                     false,
                     snippet.getPublishedAt().getValue())
             );

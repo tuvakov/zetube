@@ -18,14 +18,19 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.material.navigation.NavigationView;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
@@ -72,15 +77,24 @@ public class VideoFeedActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mTextViewFeedback;
-
+    private NavigationView mViewNavigation;
+    private DrawerLayout mDrawer;
+    private TextView mTextViewAccountName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_video_feed);
-        Objects.requireNonNull(getSupportActionBar()).setElevation(0f);
 
         ((ZeYouBe) getApplication()).getAppComponent().injectVideoFeedActivityFields(this);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        mDrawer = findViewById(R.id.layout_drawer);
+        mViewNavigation = findViewById(R.id.nav_view);
+        mTextViewAccountName = mViewNavigation.getHeaderView(0).findViewById(R.id.tv_nav_account);
+        setupDrawer(toolbar);
 
         mProgressBar = findViewById(R.id.progress_circular);
         mTextViewFeedback = findViewById(R.id.tv_feedback);
@@ -130,6 +144,15 @@ public class VideoFeedActivity extends AppCompatActivity
 
         mCredential = mYouTubeApiUtils.getGoogleCredential();
         startSyncChain();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawer.isDrawerOpen(GravityCompat.START)) {
+            mDrawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -376,6 +399,17 @@ public class VideoFeedActivity extends AppCompatActivity
         mMainViewModel.setIsSyncing(false);
     }
 
+    private void setupDrawer(Toolbar toolbar) {
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, mDrawer, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        mDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        // Set up account name in navigation header
+        String accountName = mPrefUtils.getAccountName();
+        mTextViewAccountName.setText(accountName);
+    }
+
     private void setStatusIdle() {
         VideoFeedSyncService.STATUS.setValue(
                 new SyncStatus(VideoFeedSyncService.STATUS_SYNC_IDLE)
@@ -408,6 +442,10 @@ public class VideoFeedActivity extends AppCompatActivity
         mPrefUtils.saveLastSyncTime(0);
         mMainViewModel.deleteAllVideos();
         mMainViewModel.deleteAllSubscriptions();
+        /* Set account name text view empty */
+        if (mTextViewAccountName != null) {
+            mTextViewAccountName.setText("");
+        }
     }
 
     private void showDeleteDialog() {

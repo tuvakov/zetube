@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_feed"
+            android:icon="@drawable/ic_feed_white_24dp"
+            android:title="@string/nav_item_feed" />
+        <item
+            android:id="@+id/nav_channels"
+            android:icon="@drawable/ic_channels_white_24dp"
+            android:title="@string/nav_item_channels" />
+        <item
+            android:id="@+id/nav_saved_videos"
+            android:icon="@drawable/ic_playlist_play_white_24dp"
+            android:title="@string/nav_item_saved_videos" />
+    </group>
+</menu>

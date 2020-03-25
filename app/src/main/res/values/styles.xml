@@ -37,4 +37,9 @@
         <item name="android:textColor">@color/colorAccent</item>
     </style>
 
+    <style name="Widget.Custom.NavigationView" parent="Widget.Design.NavigationView">
+        <item name="itemIconTint">@color/primaryTextColor</item>
+        <item name="itemTextColor">@color/primaryTextColor</item>
+    </style>
+
 </resources>

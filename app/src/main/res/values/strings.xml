@@ -46,4 +46,13 @@
     <string name="menu_item_update_feed">Update Feed</string>
     <string name="menu_item_delete_all">Delete All</string>
 
+    <!-- Navigation Drawer Strings -->
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_item_feed">Feed</string>
+    <string name="nav_item_channels">Channels</string>
+    <string name="nav_item_saved_videos">Saved Videos</string>
+    <string name="nav_item_account">Account</string>
+    <string name="nav_item_logout">Logout</string>
+
 </resources>

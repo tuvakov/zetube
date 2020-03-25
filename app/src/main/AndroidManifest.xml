@@ -15,7 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity android:name="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity">
+        <activity
+            android:name="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

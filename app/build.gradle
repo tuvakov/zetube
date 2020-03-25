@@ -52,6 +52,9 @@ dependencies {
     def material = '1.2.0-alpha05'
     implementation "com.google.android.material:material:$material"
 
+    def drawerLayout = '1.0.0'
+    implementation "androidx.drawerlayout:drawerlayout:$drawerLayout"
+
     def room = '2.2.4'
     implementation "androidx.room:room-runtime:$room"
     annotationProcessor "androidx.room:room-compiler:$room"

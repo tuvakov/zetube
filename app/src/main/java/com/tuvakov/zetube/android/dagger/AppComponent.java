@@ -1,6 +1,7 @@
 package com.tuvakov.zetube.android.dagger;
 
 import com.tuvakov.zetube.android.VideoFeedSyncService;
+import com.tuvakov.zetube.android.ui.channels.ChannelsActivity;
 import com.tuvakov.zetube.android.ui.feed.VideoFeedActivity;
 import com.tuvakov.zetube.android.ui.player.PlayerActivity;
 
@@ -17,6 +18,8 @@ public interface AppComponent {
     void injectPlayerActivityFields(PlayerActivity playerActivity);
 
     void injectVideoFeedSyncService(VideoFeedSyncService service);
+
+    void injectChannelsActivity(ChannelsActivity channelsActivity);
 
     @Component.Factory
     interface Factory {

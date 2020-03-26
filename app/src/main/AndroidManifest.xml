@@ -34,6 +34,10 @@
                 android:value="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity" />
         </activity>
 
+        <activity
+            android:name=".ui.channels.ChannelsActivity"
+            android:parentActivityName=".ui.feed.VideoFeedActivity" />
+
         <service
             android:name="com.tuvakov.zetube.android.VideoFeedSyncService"
             android:exported="false" />

@@ -25,7 +25,9 @@
         This app needs to access your Google account (via Contacts) in order to fetch your YouTube
         subscription feed.
     </string>
+    <string name="msg_info_loading">Loading…</string>
     <string name="msg_info_empty_result_set">Feed is empty.</string>
+    <string name="msg_info_empty_channel_list">Channel list is empty.</string>
     <string name="msg_info_restart_or_man_sync">
         Please restart the app or press manual sync button at the top of the screen.
     </string>

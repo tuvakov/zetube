@@ -38,6 +38,7 @@ import com.tuvakov.zetube.android.R;
 import com.tuvakov.zetube.android.VideoFeedSyncService;
 import com.tuvakov.zetube.android.ZeYouBe;
 import com.tuvakov.zetube.android.data.SyncStatus;
+import com.tuvakov.zetube.android.ui.channels.ChannelsActivity;
 import com.tuvakov.zetube.android.ui.player.PlayerActivity;
 import com.tuvakov.zetube.android.utils.DateTimeUtils;
 import com.tuvakov.zetube.android.utils.PrefUtils;
@@ -52,7 +53,8 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 public class VideoFeedActivity extends AppCompatActivity
-        implements EasyPermissions.PermissionCallbacks {
+        implements EasyPermissions.PermissionCallbacks,
+        NavigationView.OnNavigationItemSelectedListener {
 
     private static final int REQUEST_ACCOUNT_PICKER = 1000;
     private static final int REQUEST_AUTHORIZATION = 1001;
@@ -77,7 +79,6 @@ public class VideoFeedActivity extends AppCompatActivity
     private RecyclerView mRecyclerView;
     private ProgressBar mProgressBar;
     private TextView mTextViewFeedback;
-    private NavigationView mViewNavigation;
     private DrawerLayout mDrawer;
     private TextView mTextViewAccountName;
 
@@ -92,7 +93,8 @@ public class VideoFeedActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
         mDrawer = findViewById(R.id.layout_drawer);
-        mViewNavigation = findViewById(R.id.nav_view);
+        NavigationView mViewNavigation = findViewById(R.id.nav_view);
+        mViewNavigation.setNavigationItemSelectedListener(this);
         mTextViewAccountName = mViewNavigation.getHeaderView(0).findViewById(R.id.tv_nav_account);
         setupDrawer(toolbar);
 
@@ -153,6 +155,22 @@ public class VideoFeedActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.nav_channels:
+                gotoChannels();
+                break;
+            case R.id.nav_saved_videos:
+                Log.d(TAG, "onNavigationItemSelected: Saved Videos");
+                break;
+            default:
+                break;
+        }
+        mDrawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
     @Override
@@ -408,6 +426,13 @@ public class VideoFeedActivity extends AppCompatActivity
         // Set up account name in navigation header
         String accountName = mPrefUtils.getAccountName();
         mTextViewAccountName.setText(accountName);
+    }
+
+    private void gotoChannels() {
+        if (mPrefUtils.getAccountName() != null && !mMainViewModel.isSyncing()) {
+            Intent intent = new Intent(this, ChannelsActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void setStatusIdle() {

@@ -20,7 +20,7 @@ data class Video(
         @ColumnInfo(name = "is_hidden") val isHidden: Boolean = false,
         @ColumnInfo(name = "published_at") val publishedAt: Long = 0
 ) {
-    fun getLocalDateTimePublishedAt(): ZonedDateTime? {
+    fun getLocalDateTimePublishedAt(): ZonedDateTime {
         return Instant.ofEpochMilli(publishedAt).atZone(ZoneId.systemDefault())
     }
 }

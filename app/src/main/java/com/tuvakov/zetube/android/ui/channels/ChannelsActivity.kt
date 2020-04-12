@@ -9,7 +9,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeYouBe
+import com.tuvakov.zetube.android.ZeTubeApp
+import com.tuvakov.zetube.android.utils.hide
+import com.tuvakov.zetube.android.utils.show
 import kotlinx.android.synthetic.main.layout_video_feed.*
 import javax.inject.Inject
 
@@ -25,7 +27,7 @@ class ChannelsActivity : AppCompatActivity() {
         setContentView(R.layout.layout_video_feed)
 
         // Inject dependencies
-        (application as ZeYouBe).appComponent.injectChannelsActivity(this)
+        (application as ZeTubeApp).appComponent.injectChannelsActivity(this)
 
         /* Setup action bar title */
         supportActionBar?.setTitle(R.string.nav_item_channels)
@@ -59,15 +61,15 @@ class ChannelsActivity : AppCompatActivity() {
     }
 
     private fun showRecyclerView() {
-        progress_circular.visibility = View.GONE
-        tv_feedback.visibility = View.GONE
-        rv_video_feed.visibility = View.VISIBLE
+        progress_circular.hide()
+        tv_feedback.hide()
+        rv_video_feed.show()
     }
 
     private fun showMessage(messageStringId: Int, progressBarVisibility: Int) {
-        rv_video_feed.visibility = View.GONE
-        progress_circular.visibility = progressBarVisibility
-        tv_feedback.visibility = View.VISIBLE
+        rv_video_feed.show()
+        tv_feedback.hide()
         tv_feedback.setText(messageStringId)
+        progress_circular.visibility = progressBarVisibility
     }
 }

@@ -9,7 +9,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 class ChannelsViewModel(private val subscriptionRepo: SubscriptionRepo) : ViewModel() {
-    fun getChannels(): LiveData<List<Subscription>> = subscriptionRepo.allSubscriptions
+    fun getChannels(): LiveData<List<Subscription>> = subscriptionRepo.subscriptions
 }
 
 @Singleton

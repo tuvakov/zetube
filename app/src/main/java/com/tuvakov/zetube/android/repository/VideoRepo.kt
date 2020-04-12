@@ -1,56 +1,33 @@
 package com.tuvakov.zetube.android.repository
 
-import androidx.lifecycle.LiveData
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.data.VideoDao
-import java.util.concurrent.Callable
-import java.util.concurrent.ExecutionException
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Future
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class VideoRepo @Inject constructor(
-        private val mVideoDao: VideoDao,
-        private val mDiskIO: ExecutorService
-) {
-    val allVideos: LiveData<List<Video>> = mVideoDao.selectAllVideos()
+class VideoRepo @Inject constructor(private val mVideoDao: VideoDao) {
+    val videos = mVideoDao.videos
 
-    fun insert(video: Video) {
-        mDiskIO.execute { mVideoDao.insert(video) }
+    suspend fun insert(video: Video) {
+        mVideoDao.insert(video)
     }
 
-    fun bulkInsertForService(videos: List<Video>) {
+    suspend fun bulkInsert(videos: List<Video>) {
         mVideoDao.bulkInsert(videos)
     }
 
-    fun update(video: Video) {
-        mDiskIO.execute { mVideoDao.update(video) }
+    suspend fun update(video: Video) {
+        mVideoDao.update(video)
     }
 
-    fun delete(video: Video) {
-        mDiskIO.execute { mVideoDao.delete(video) }
+    suspend fun delete(video: Video) {
+        mVideoDao.delete(video)
     }
 
-    fun deleteAll() {
-        mDiskIO.execute { mVideoDao.deleteAll() }
-    }
-
-    fun deleteAllForService() {
+    suspend fun deleteAll() {
         mVideoDao.deleteAll()
     }
 
-    fun getVideoById(videoId: String): Video? {
-        val video: Future<Video?> = mDiskIO.submit(Callable { mVideoDao.getVideoById(videoId) })
-        return try {
-            video.get()
-        } catch (e: ExecutionException) {
-            e.printStackTrace()
-            null
-        } catch (e: InterruptedException) {
-            e.printStackTrace()
-            null
-        }
-    }
+    suspend fun getVideoById(videoId: String): Video = mVideoDao.getVideoById(videoId)
 }

@@ -3,39 +3,31 @@ package com.tuvakov.zetube.android.repository
 import androidx.lifecycle.LiveData
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.SubscriptionDao
-import java.util.concurrent.ExecutorService
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class SubscriptionRepo @Inject constructor(
-        private val mSubscriptionDao: SubscriptionDao,
-        private val mDiskIO: ExecutorService
-) {
+class SubscriptionRepo @Inject constructor(private val mSubscriptionDao: SubscriptionDao) {
 
-    val allSubscriptions: LiveData<List<Subscription>> = mSubscriptionDao.selectAll()
+    val subscriptions: LiveData<List<Subscription>> = mSubscriptionDao.subscriptions
 
-    fun insert(subscription: Subscription) {
-        mDiskIO.execute { mSubscriptionDao.insert(subscription) }
+    suspend fun insert(subscription: Subscription) {
+        mSubscriptionDao.insert(subscription)
     }
 
-    fun bulkInsertForService(subscriptions: List<Subscription>) {
+    suspend fun bulkInsert(subscriptions: List<Subscription>) {
         mSubscriptionDao.bulkInsert(subscriptions)
     }
 
-    fun update(subscription: Subscription) {
-        mDiskIO.execute { mSubscriptionDao.update(subscription) }
+    suspend fun update(subscription: Subscription) {
+        mSubscriptionDao.update(subscription)
     }
 
-    fun delete(subscription: Subscription) {
-        mDiskIO.execute { mSubscriptionDao.delete(subscription) }
+    suspend fun delete(subscription: Subscription) {
+        mSubscriptionDao.delete(subscription)
     }
 
-    fun deleteAll() {
-        mDiskIO.execute { mSubscriptionDao.deleteAll() }
-    }
-
-    fun deleteAllForService() {
+    suspend fun deleteAll() {
         mSubscriptionDao.deleteAll()
     }
 }

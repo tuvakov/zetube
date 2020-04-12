@@ -5,21 +5,22 @@ import androidx.room.*
 
 @Dao
 interface SubscriptionDao {
-    @Query("SELECT * FROM subscriptions")
-    fun selectAll(): LiveData<List<Subscription>>
+
+    @get: Query("SELECT * FROM subscriptions")
+    val subscriptions: LiveData<List<Subscription>>
 
     @Insert
-    fun insert(subscription: Subscription)
+    suspend fun insert(subscription: Subscription)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun bulkInsert(subscriptions: List<Subscription>)
+    suspend fun bulkInsert(subscriptions: List<Subscription>)
 
     @Update
-    fun update(subscription: Subscription)
+    suspend fun update(subscription: Subscription)
 
     @Delete
-    fun delete(subscription: Subscription)
+    suspend fun delete(subscription: Subscription)
 
     @Query("DELETE FROM subscriptions")
-    fun deleteAll()
+    suspend fun deleteAll()
 }

@@ -27,7 +27,6 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.VideoFeedSyncService
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.SyncStatus
 import com.tuvakov.zetube.android.data.Video
@@ -104,7 +103,7 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         })
 
         /* Observe and react sync status */
-        VideoFeedSyncService.STATUS.observe(this, Observer { status: SyncStatus ->
+        mMainViewModel.status.observe(this, Observer { status: SyncStatus ->
             handleSyncStatus(status)
         })
 
@@ -242,9 +241,7 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         } else if (!isDeviceOnline) {
             showMessage(R.string.msg_warning_no_network, View.GONE)
         } else if (hasDayPassed()) {
-            mMainViewModel.isSyncing = true
-            val intent = Intent(this, VideoFeedSyncService::class.java)
-            startService(intent)
+           mMainViewModel.sync()
         }
     }
 
@@ -333,7 +330,7 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
 
     private fun handleSyncStatus(status: SyncStatus) {
         val resultCode = status.resultCode
-        if (resultCode == VideoFeedSyncService.STATUS_SYNC_STARTED) {
+        if (resultCode == SyncUtils.STATUS_SYNC_STARTED) {
             showMessage(R.string.msg_info_sync_start, View.VISIBLE)
             return
         }
@@ -343,27 +340,26 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             clearUpData()
         }
         when (resultCode) {
-            VideoFeedSyncService.STATUS_SYNC_SUCCESS -> {
+            SyncUtils.STATUS_SYNC_SUCCESS -> {
                 setStatusIdle()
                 showRecyclerView()
             }
-            VideoFeedSyncService.STATUS_SYNC_GOOGLE_PLAY_FAILURE -> {
+            SyncUtils.STATUS_SYNC_GOOGLE_PLAY_FAILURE -> {
                 val code = (status.exception as GooglePlayServicesAvailabilityIOException)
                         .connectionStatusCode
                 showGooglePlayServicesAvailabilityErrorDialog(code)
                 setStatusIdle()
             }
-            VideoFeedSyncService.STATUS_SYNC_AUTH_FAILURE -> {
+            SyncUtils.STATUS_SYNC_AUTH_FAILURE -> {
                 val intent = (status.exception as UserRecoverableAuthIOException?)!!.intent
                 startActivityForResult(intent, REQUEST_AUTHORIZATION)
                 setStatusIdle()
             }
-            VideoFeedSyncService.STATUS_SYNC_FAILURE -> {
+            SyncUtils.STATUS_SYNC_FAILURE -> {
                 showMessage(R.string.msg_error_sync_failure, View.GONE)
                 setStatusIdle()
             }
         }
-        mMainViewModel.isSyncing = false
     }
 
     private fun setupDrawer() {
@@ -385,7 +381,7 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
     }
 
     private fun setStatusIdle() {
-        VideoFeedSyncService.STATUS.value = SyncStatus(VideoFeedSyncService.STATUS_SYNC_IDLE)
+        mMainViewModel.setStatusIdle()
     }
 
     private fun showRecyclerView() {

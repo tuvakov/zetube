@@ -15,9 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <activity
-            android:name="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -27,8 +25,7 @@
         <activity
             android:name="com.tuvakov.zetube.android.ui.player.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
-            android:parentActivityName="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity" />

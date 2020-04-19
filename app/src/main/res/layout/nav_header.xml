@@ -3,15 +3,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="176dp"
+    android:layout_height="@dimen/height_navbar_header"
     android:background="@color/primaryColor"
-    android:elevation="8dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:elevation="@dimen/elevation_standard"
+    android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
 
     <ImageView
         android:id="@+id/nav_logo"
-        android:layout_width="85dp"
-        android:layout_height="85dp"
+        android:layout_width="@dimen/width_nav_logo"
+        android:layout_height="@dimen/height_nav_logo"
         android:src="@mipmap/ic_launcher_round"
         app:layout_constraintBottom_toTopOf="@id/tv_nav_account"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,7 +21,7 @@
         android:id="@+id/tv_nav_account"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="12dp"
+        android:layout_marginBottom="@dimen/margin_large"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

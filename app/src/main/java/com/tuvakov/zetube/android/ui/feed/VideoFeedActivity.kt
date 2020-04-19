@@ -33,6 +33,7 @@ import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
 import kotlinx.android.synthetic.main.activity_video_feed.*
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.layout_video_feed.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions

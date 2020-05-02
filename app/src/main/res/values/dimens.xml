@@ -5,6 +5,8 @@
     <dimen name="margin_small">4dp</dimen>
     <dimen name="margin_medium">8dp</dimen>
     <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_xlarge">24dp</dimen>
+    <dimen name="margin_xxlarge">32dp</dimen>
 
     <dimen name="padding_small">4dp</dimen>
     <dimen name="padding_medium">8dp</dimen>
@@ -22,4 +24,7 @@
 
     <dimen name="width_item_channel_view_avatar">100dp</dimen>
     <dimen name="height_item_channel_view_avatar">100dp</dimen>
+
+    <dimen name="width_channel_desc_frag_avatar">150dp</dimen>
+    <dimen name="height_channel_desc_frag_avatar">150dp</dimen>
 </resources>

@@ -8,6 +8,9 @@ interface VideoDao {
     @get:Query("SELECT * FROM videos ORDER BY published_at DESC")
     val videos: LiveData<List<Video>>
 
+    @Query("SELECT * FROM videos WHERE channel_id = :channelId ORDER BY published_at DESC")
+    suspend fun getVideosByChannelId(channelId: String): List<Video>
+
     @Query("SELECT * FROM videos WHERE id = :id")
     suspend fun getVideoById(id: String): Video
 

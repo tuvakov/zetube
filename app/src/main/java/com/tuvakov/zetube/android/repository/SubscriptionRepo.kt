@@ -11,6 +11,8 @@ class SubscriptionRepo @Inject constructor(private val mSubscriptionDao: Subscri
 
     val subscriptions: LiveData<List<Subscription>> = mSubscriptionDao.subscriptions
 
+    suspend fun getSubscriptionById(id: String) = mSubscriptionDao.getSubscriptionById(id)
+
     suspend fun insert(subscription: Subscription) {
         mSubscriptionDao.insert(subscription)
     }

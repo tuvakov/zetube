@@ -9,6 +9,8 @@ import javax.inject.Singleton
 class VideoRepo @Inject constructor(private val mVideoDao: VideoDao) {
     val videos = mVideoDao.videos
 
+    suspend fun getVideosByChannelId(channelId: String) = mVideoDao.getVideosByChannelId(channelId)
+
     suspend fun insert(video: Video) {
         mVideoDao.insert(video)
     }

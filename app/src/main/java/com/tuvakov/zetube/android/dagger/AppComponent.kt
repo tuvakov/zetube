@@ -1,5 +1,6 @@
 package com.tuvakov.zetube.android.dagger
 
+import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModelFactory
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.ui.feed.VideoFeedActivity
 import com.tuvakov.zetube.android.ui.player.PlayerActivity
@@ -12,6 +13,8 @@ interface AppComponent {
     fun injectVideoFeedActivityFields(videoFeedActivity: VideoFeedActivity)
     fun injectPlayerActivityFields(playerActivity: PlayerActivity)
     fun injectChannelsActivity(channelsActivity: ChannelsActivity)
+
+    fun channelDetailViewModelFactory(): ChannelDetailViewModelFactory
 
     @Component.Factory
     interface Factory {

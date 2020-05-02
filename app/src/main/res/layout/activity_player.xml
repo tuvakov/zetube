@@ -17,8 +17,8 @@
 
     <ImageView
         android:id="@+id/iv_channel_avatar"
-        android:layout_width="@dimen/width_item_channel_view_avatar"
-        android:layout_height="@dimen/height_item_channel_view_avatar"
+        android:layout_width="@dimen/width_video_feed_channel_avatar"
+        android:layout_height="@dimen/height_video_feed_channel_avatar"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_large"
         android:contentDescription="@string/content_description_avatar_thumbnail"

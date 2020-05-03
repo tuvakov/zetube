@@ -1,5 +1,6 @@
 package com.tuvakov.zetube.android.utils
 
+import com.tuvakov.zetube.android.utils.SyncUtils.Companion.SYNC_INTERVAL_HOURS
 import org.threeten.bp.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
@@ -15,14 +16,13 @@ class DateTimeUtils @Inject constructor() {
         return now.minusMillis(TimeUnit.DAYS.toMillis(n.toLong())).toEpochMilli()
     }
 
-    fun hasDayPassed(since: Long): Boolean {
-        return utcEpoch - since >= DAY_IN_MILLIS
+    fun isSyncAllowed(since: Long): Boolean {
+        return utcEpoch - since >= HOUR_IN_MILLIS * SYNC_INTERVAL_HOURS
     }
 
     companion object {
         private const val SECOND_IN_MILLIS: Long = 1000
         private const val MINUTE_IN_MILLIS = SECOND_IN_MILLIS * 60
         private const val HOUR_IN_MILLIS = MINUTE_IN_MILLIS * 60
-        private const val DAY_IN_MILLIS = HOUR_IN_MILLIS * 24
     }
 }

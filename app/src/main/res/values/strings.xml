@@ -35,7 +35,7 @@
         Please restart the app or press manual sync button at the top of the screen.
     </string>
     <string name="msg_info_sync_not_allowed">
-        Sync is allowed once in 24 hours. Please try again later.
+        Sync is allowed once in %1$d hours. Please try again later.
     </string>
     <string name="msg_info_already_syncing">Already syncing.</string>
     <string name="msg_delete_dialog">Do you confirm deleting all of the data?</string>

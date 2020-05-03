@@ -148,8 +148,10 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
                     Toast.makeText(this, R.string.msg_info_already_syncing,
                             Toast.LENGTH_SHORT).show()
                     return true
-                } else if (!hasDayPassed()) {
-                    Toast.makeText(this, getString(R.string.msg_info_sync_not_allowed),
+                } else if (!isSyncAllowed()) {
+                    Toast.makeText(
+                            this,
+                            getString(R.string.msg_info_sync_not_allowed, SyncUtils.SYNC_INTERVAL_HOURS),
                             Toast.LENGTH_LONG).show()
                     return true
                 }
@@ -241,8 +243,8 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             chooseAccount()
         } else if (!isDeviceOnline) {
             showMessage(R.string.msg_warning_no_network, View.GONE)
-        } else if (hasDayPassed()) {
-           mMainViewModel.sync()
+        } else if (isSyncAllowed()) {
+            mMainViewModel.sync()
         }
     }
 
@@ -402,8 +404,8 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         return EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS)
     }
 
-    private fun hasDayPassed(): Boolean {
-        return mDateTimeUtils.hasDayPassed(mPrefUtils.lastSyncTime)
+    private fun isSyncAllowed(): Boolean {
+        return mDateTimeUtils.isSyncAllowed(mPrefUtils.lastSyncTime)
     }
 
     private fun clearUpData() {

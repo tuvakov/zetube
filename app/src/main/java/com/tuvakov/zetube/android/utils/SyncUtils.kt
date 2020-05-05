@@ -4,8 +4,7 @@ import android.util.Log
 import com.google.api.services.youtube.YouTube
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
-import com.tuvakov.zetube.android.repository.SubscriptionRepo
-import com.tuvakov.zetube.android.repository.VideoRepo
+import com.tuvakov.zetube.android.repository.Repository
 import kotlinx.coroutines.*
 import java.io.IOException
 import javax.inject.Inject
@@ -19,8 +18,7 @@ import javax.inject.Singleton
 class SyncUtils @Inject constructor(
         private val mYouTubeApiUtils: YouTubeApiUtils,
         private val mPrefUtils: PrefUtils,
-        private val mVideoRepo: VideoRepo,
-        private val mSubscriptionRepo: SubscriptionRepo,
+        private val repository: Repository,
         private val mDateTimeUtils: DateTimeUtils
 ) {
 
@@ -40,11 +38,7 @@ class SyncUtils @Inject constructor(
         val startingDay = mDateTimeUtils.getUtcEpochNDaysAgo(LAST_DAY_NO)
         val subscriptions = getSubscriptions(youTubeService)
         val videos = getVideos(youTubeService, subscriptions, startingDay)
-        mSubscriptionRepo.deleteAll()
-        // TODO: Hidden and saved videos should be excluded later.
-        mVideoRepo.deleteAll()
-        mSubscriptionRepo.bulkInsert(subscriptions)
-        mVideoRepo.bulkInsert(videos)
+        repository.insertDataAfterSync(subscriptions, videos)
         mPrefUtils.saveLastSyncTime(mDateTimeUtils.utcEpoch)
     }
 

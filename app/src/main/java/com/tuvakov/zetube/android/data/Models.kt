@@ -16,7 +16,7 @@ data class Video(
         @ColumnInfo(name = "channel_id") val channelId: String,
         @ColumnInfo(name = "channel_title") val channelTitle: String,
         @ColumnInfo(name = "channel_avatar") val channelAvatar: String,
-        @ColumnInfo(name = "is_saved") val isSaved: Boolean = false,
+        @ColumnInfo(name = "is_saved") var isSaved: Boolean = false,
         @ColumnInfo(name = "is_hidden") val isHidden: Boolean = false,
         @ColumnInfo(name = "published_at") val publishedAt: Long = 0
 ) {

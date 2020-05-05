@@ -66,9 +66,6 @@
     <Button
         android:id="@+id/btn_save"
         style="@style/ZeTubeTextButton"
-        android:text="@string/btn_txt_save"
-        android:visibility="gone"
-        app:icon="@drawable/ic_playlist_add_black_24dp"
         app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toEndOf="@id/btn_share"
         app:layout_constraintTop_toTopOf="@id/btn_share" />

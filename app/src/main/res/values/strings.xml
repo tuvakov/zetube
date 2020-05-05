@@ -23,6 +23,8 @@
     <string name="msg_info_sync_start">
         Preparing your subscription feed. Please wait for a moment!
     </string>
+    <string name="msg_info_video_saved">Video is saved.</string>
+    <string name="msg_info_video_removed">Video is removed.</string>
     <string name="msg_success_sync_success"> Sync has been completed successfully. </string>
     <string name="msg_permission_get_accounts">
         This app needs to access your Google account (via Contacts) in order to fetch your YouTube
@@ -44,6 +46,7 @@
     <!-- Button texts -->
     <string name="btn_txt_share">Share</string>
     <string name="btn_txt_save">Save</string>
+    <string name="btn_txt_remove">Remove</string>
     <string name="btn_txt_confirm">Confirm</string>
     <string name="btn_txt_cancel">Cancel</string>
 

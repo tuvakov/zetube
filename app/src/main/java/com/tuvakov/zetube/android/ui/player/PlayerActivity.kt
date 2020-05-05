@@ -7,9 +7,12 @@ import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.android.material.button.MaterialButton
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.AbstractYouTubePlayerListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
@@ -58,11 +61,6 @@ class PlayerActivity : AppCompatActivity() {
 
         /* Get Video object from DB and check for nullness */
         val video = mMainViewModel.getVideoById(mVideoId)
-        if (video == null) {
-            Log.d(TAG, "onCreate: Video is null")
-            showErrorMessage()
-            return
-        }
 
         fillViews(video)
         initYoutubePlayerView()
@@ -81,6 +79,18 @@ class PlayerActivity : AppCompatActivity() {
             if (intent.resolveActivity(packageManager) != null) {
                 startActivity(intent)
             }
+        }
+
+        btn_save.setOnClickListener {
+            video.isSaved = !video.isSaved
+            val msg = if (video.isSaved) {
+                R.string.msg_info_video_saved
+            } else {
+                R.string.msg_info_video_removed
+            }
+            mMainViewModel.updateVideo(video)
+            Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+            setSaveButton(video)
         }
     }
 
@@ -131,12 +141,25 @@ class PlayerActivity : AppCompatActivity() {
         tv_video_title.text = video.title
         tv_video_info.text = videoInfo
         tv_video_description.text = video.description
+        setSaveButton(video)
         Glide.with(this)
                 .load(video.channelAvatar)
                 .centerCrop()
                 .circleCrop()
                 .placeholder(ColorDrawable(Color.GRAY))
                 .into(iv_channel_avatar)
+    }
+
+    private fun setSaveButton(video: Video) {
+        if (video.isSaved) {
+            btn_save.setText(R.string.btn_txt_remove)
+            val icon = AppCompatResources.getDrawable(this, R.drawable.ic_remove_white_24dp)
+            (btn_save as MaterialButton).icon = icon
+        } else {
+            btn_save.setText(R.string.btn_txt_save)
+            val icon = AppCompatResources.getDrawable(this, R.drawable.ic_add_white_24dp)
+            (btn_save as MaterialButton).icon = icon
+        }
     }
 
     private fun showErrorMessage() {
@@ -147,6 +170,7 @@ class PlayerActivity : AppCompatActivity() {
     private fun hideViews() {
         iv_channel_avatar.hide()
         btn_share.hide()
+        btn_save.hide()
         tv_video_title.hide()
         tv_video_info.hide()
         tv_video_description.hide()

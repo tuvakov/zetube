@@ -5,8 +5,11 @@ import androidx.room.*
 
 @Dao
 interface VideoDao {
-    @get:Query("SELECT * FROM videos ORDER BY published_at DESC")
-    val videos: LiveData<List<Video>>
+    @Query("SELECT * FROM videos ORDER BY published_at DESC")
+    fun getAllVideos(): LiveData<List<Video>>
+
+    @Query("SELECT * FROM videos WHERE is_saved = 1 ORDER BY published_at DESC")
+    fun getSavedVideos(): LiveData<List<Video>>
 
     @Query("SELECT * FROM videos WHERE channel_id = :channelId ORDER BY published_at DESC")
     suspend fun getVideosByChannelId(channelId: String): List<Video>
@@ -17,7 +20,7 @@ interface VideoDao {
     @Insert
     suspend fun insert(video: Video)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun bulkInsert(videos: List<Video>)
 
     @Update
@@ -25,6 +28,9 @@ interface VideoDao {
 
     @Delete
     suspend fun delete(video: Video)
+
+    @Query("DELETE FROM videos WHERE is_saved = 0")
+    suspend fun deleteUnsavedVideos()
 
     @Query("DELETE FROM videos")
     suspend fun deleteAll()

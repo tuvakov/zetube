@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
@@ -41,7 +42,10 @@ import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
 import java.util.*
 import javax.inject.Inject
 
-class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationView.OnNavigationItemSelectedListener {
+class VideoFeedActivity : AppCompatActivity(),
+        PermissionCallbacks,
+        NavigationView.OnNavigationItemSelectedListener {
+
     @Inject
     lateinit var mMainViewModelFactory: MainViewModelFactory
 
@@ -73,8 +77,33 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         setupDrawer()
 
         /* Setup the RecyclerView */
-        rv_video_feed.setHasFixedSize(true)
-        val videoFeedAdapter = VideoFeedAdapter()
+        val videoFeedAdapter = VideoFeedAdapter().also {
+            it.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onChanged() {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+            })
+        }
         rv_video_feed.adapter = videoFeedAdapter
 
         /* Setup the ViewModel and start observing */
@@ -100,7 +129,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             /* Update data */
             videoFeedAdapter.submitList(videos)
             showRecyclerView()
-            rv_video_feed.scrollToPosition(0)
         })
 
         /* Observe and react sync status */
@@ -123,10 +151,9 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_feed -> mMainViewModel.loadAllVideos()
             R.id.nav_channels -> gotoChannels()
-            R.id.nav_saved_videos -> Log.d(TAG, "onNavigationItemSelected: Saved Videos")
-            else -> {
-            }
+            R.id.nav_saved_videos -> mMainViewModel.loadSavedVideos()
         }
         layout_drawer.closeDrawer(GravityCompat.START)
         return true
@@ -162,17 +189,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Called when an activity launched here (specifically, AccountPicker
-     * and authorization) exits, giving you the requestCode you started it with,
-     * the resultCode it returned, and any additional data from it.
-     *
-     * @param requestCode code indicating which activity result is incoming.
-     * @param resultCode  code indicating the result of the incoming
-     * activity result.
-     * @param data        Intent (containing result data) returned by incoming
-     * activity result.
-     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -203,15 +219,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Respond to requests for permissions at runtime for API 23 and above.
-     *
-     * @param requestCode  The request code passed in
-     * requestPermissions(android.app.Activity, String, int, String[])
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     * which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
-     */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -229,13 +236,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         showMessage(R.string.msg_permission_get_accounts, View.GONE)
     }
 
-    /**
-     * Attempt to call the API, after verifying that all the preconditions are
-     * satisfied. The preconditions are: Google Play Services installed, an
-     * account was selected and the device currently has online access. If any
-     * of the preconditions are not satisfied, the app will prompt the user as
-     * appropriate.
-     */
     private fun startSyncChain() {
         if (!isGooglePlayServicesAvailable) {
             acquireGooglePlayServices()
@@ -248,16 +248,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Attempts to set the account used with the API credentials. If an account
-     * name was previously saved it will use that one; otherwise an account
-     * picker dialog will be shown to the user. Note that the setting the
-     * account to use with the credentials object requires the app to have the
-     * GET_ACCOUNTS permission, which is requested here if it is not already
-     * present. The AfterPermissionGranted annotation indicates that this
-     * function will be rerun automatically whenever the GET_ACCOUNTS permission
-     * is granted.
-     */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private fun chooseAccount() {
         if (hasContactsPermission()) {
@@ -289,12 +279,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             return networkInfo != null && networkInfo.isConnected
         }
 
-    /**
-     * Check that Google Play services APK is installed and up to date.
-     *
-     * @return true if Google Play Services is available and up to
-     * date on this device; false otherwise.
-     */
     private val isGooglePlayServicesAvailable: Boolean
         get() {
             val apiAvailability = GoogleApiAvailability.getInstance()
@@ -302,10 +286,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             return connectionStatusCode == ConnectionResult.SUCCESS
         }
 
-    /**
-     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
-     * Play Services installation via a user dialog, if possible.
-     */
     private fun acquireGooglePlayServices() {
         val apiAvailability = GoogleApiAvailability.getInstance()
         val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
@@ -314,13 +294,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Display an error dialog showing that Google Play Services is missing
-     * or out of date.
-     *
-     * @param connectionStatusCode code describing the presence (or lack of)
-     * Google Play Services on this device.
-     */
     private fun showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode: Int) {
         val apiAvailability = GoogleApiAvailability.getInstance()
         val dialog = apiAvailability.getErrorDialog(
@@ -409,10 +382,8 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
     }
 
     private fun clearUpData() {
-        mPrefUtils.deleteAccountName()
-        mPrefUtils.saveLastSyncTime(0)
-        mMainViewModel.deleteAllVideos()
-        mMainViewModel.deleteAllSubscriptions()
+        mPrefUtils.emptyPreferences()
+        mMainViewModel.emptyDatabase()
         /* Set account name text view empty */
         mTextViewAccountName.text = ""
     }

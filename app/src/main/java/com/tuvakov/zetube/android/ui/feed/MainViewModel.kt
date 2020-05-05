@@ -6,8 +6,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlaySe
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.tuvakov.zetube.android.data.SyncStatus
 import com.tuvakov.zetube.android.data.Video
-import com.tuvakov.zetube.android.repository.SubscriptionRepo
-import com.tuvakov.zetube.android.repository.VideoRepo
+import com.tuvakov.zetube.android.repository.Repository
 import com.tuvakov.zetube.android.utils.SyncUtils
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -16,27 +15,37 @@ import javax.inject.Singleton
 
 class MainViewModel internal constructor(
         private val syncUtils: SyncUtils,
-        private val mSubscriptionRepo: SubscriptionRepo,
-        private val mVideoRepo: VideoRepo
+        private val repository: Repository
 ) : ViewModel() {
+    private val isVideoSourceAll = MutableLiveData(true)
     private val _status = MutableLiveData<SyncStatus>()
+
     var isSyncing = false
-    val videoFeed: LiveData<List<Video>>
-        get() = mVideoRepo.videos
+
     val status: LiveData<SyncStatus>
         get() = _status
 
-    fun deleteAllVideos() {
-        viewModelScope.launch { mVideoRepo.deleteAll() }
+    val videoFeed: LiveData<List<Video>> = isVideoSourceAll.switchMap { isAll ->
+        liveData {
+            if (isAll) {
+                emitSource(repository.getAllVideos())
+            } else {
+                emitSource(repository.getSavedVideos())
+            }
+        }
     }
 
-    fun deleteAllSubscriptions() {
-        viewModelScope.launch { mSubscriptionRepo.deleteAll() }
+    fun loadSavedVideos() {
+        isVideoSourceAll.value = false
+    }
+
+    fun loadAllVideos() {
+        isVideoSourceAll.value = true
     }
 
     fun getVideoById(videoId: String): Video {
         // TODO: Fix this later
-        return runBlocking { mVideoRepo.getVideoById(videoId) }
+        return runBlocking { repository.getVideoById(videoId) }
     }
 
     fun sync() {
@@ -60,16 +69,19 @@ class MainViewModel internal constructor(
                 } else {
                     _status.value = SyncStatus(SyncUtils.STATUS_SYNC_FAILURE)
                 }
-            }
-            finally {
+            } finally {
                 isSyncing = false
             }
         }
     }
 
+    fun updateVideo(video: Video) = viewModelScope.launch { repository.updateVideo(video) }
+
     fun setStatusIdle() {
-       _status.value = SyncStatus(SyncUtils.STATUS_SYNC_IDLE)
+        _status.value = SyncStatus(SyncUtils.STATUS_SYNC_IDLE)
     }
+
+    fun emptyDatabase() = viewModelScope.launch { repository.emptyDatabase() }
 
     companion object {
         private const val TAG = "MainViewModel"
@@ -78,13 +90,12 @@ class MainViewModel internal constructor(
 
 @Singleton
 class MainViewModelFactory @Inject internal constructor(
-        private val subscriptionRepo: SubscriptionRepo,
-        private val videoRepo: VideoRepo,
+        private val repository: Repository,
         private val syncUtils: SyncUtils
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(MainViewModel::class.java)) {
-            return MainViewModel(syncUtils, subscriptionRepo, videoRepo) as T
+            return MainViewModel(syncUtils, repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

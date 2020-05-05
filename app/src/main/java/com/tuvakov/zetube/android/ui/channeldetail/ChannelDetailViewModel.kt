@@ -3,16 +3,12 @@ package com.tuvakov.zetube.android.ui.channeldetail
 import androidx.lifecycle.*
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
-import com.tuvakov.zetube.android.repository.SubscriptionRepo
-import com.tuvakov.zetube.android.repository.VideoRepo
+import com.tuvakov.zetube.android.repository.Repository
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
-class ChannelDetailViewModel(
-        private val subscriptionRepo: SubscriptionRepo,
-        private val videoRepo: VideoRepo
-) : ViewModel() {
+class ChannelDetailViewModel(private val repository: Repository) : ViewModel() {
 
     private val _channel = MutableLiveData<Subscription>()
     private val _channelVideos = MutableLiveData<List<Video>>()
@@ -34,7 +30,7 @@ class ChannelDetailViewModel(
     fun fetchSubscription(channelId: String) {
         try {
             viewModelScope.launch {
-                _channel.value = subscriptionRepo.getSubscriptionById(channelId)
+                _channel.value = repository.getSubscriptionById(channelId)
                 _channelState.value = Success
             }
         } catch (error: Exception) {
@@ -46,7 +42,7 @@ class ChannelDetailViewModel(
         try {
             _videosState.value = InProgress
             viewModelScope.launch {
-                val videos = videoRepo.getVideosByChannelId(channelId)
+                val videos = repository.getVideosByChannelId(channelId)
                 if (videos.isEmpty()) {
                     _videosState.value = EmptyList
                 } else {
@@ -68,13 +64,12 @@ class ChannelDetailViewModel(
 
 @Singleton
 class ChannelDetailViewModelFactory @Inject constructor(
-        private val subscriptionRepo: SubscriptionRepo,
-        private val videoRepo: VideoRepo
+        private val repository: Repository
 ) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(ChannelDetailViewModel::class.java)) {
             @Suppress("UNCHECKED_CAST")
-            return ChannelDetailViewModel(subscriptionRepo, videoRepo) as T
+            return ChannelDetailViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

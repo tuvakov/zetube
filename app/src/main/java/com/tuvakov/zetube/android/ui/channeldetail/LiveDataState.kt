@@ -9,3 +9,5 @@ object InProgress : LiveDataState()
 object EmptyList : LiveDataState()
 
 class Error(val exception: Exception? = null) : LiveDataState()
+
+class ImmatureSyncException : Exception()

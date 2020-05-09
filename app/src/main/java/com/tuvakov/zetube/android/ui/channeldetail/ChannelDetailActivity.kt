@@ -24,7 +24,7 @@ class ChannelDetailActivity : AppCompatActivity() {
         tabs.setupWithViewPager(viewPager)
 
         /* Setup view model */
-        val viewModelFactory = (application as ZeTubeApp).appComponent.channelDetailViewModelFactory()
+        val viewModelFactory = (application as ZeTubeApp).appComponent.viewModelFactory()
         val viewModel = ViewModelProvider(this, viewModelFactory)
                 .get(ChannelDetailViewModel::class.java)
 
@@ -45,7 +45,6 @@ class ChannelDetailActivity : AppCompatActivity() {
                 viewModel.fetchVideosForSubscription(it)
             }
         }
-
     }
 
     companion object {

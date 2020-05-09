@@ -29,8 +29,8 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlaySe
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
-import com.tuvakov.zetube.android.data.SyncStatus
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
 import kotlinx.android.synthetic.main.activity_video_feed.*
@@ -47,7 +47,7 @@ class VideoFeedActivity : AppCompatActivity(),
         NavigationView.OnNavigationItemSelectedListener {
 
     @Inject
-    lateinit var mMainViewModelFactory: MainViewModelFactory
+    lateinit var mViewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var mYouTubeApiUtils: YouTubeApiUtils
@@ -107,32 +107,18 @@ class VideoFeedActivity : AppCompatActivity(),
         rv_video_feed.adapter = videoFeedAdapter
 
         /* Setup the ViewModel and start observing */
-        mMainViewModel = ViewModelProvider(this, mMainViewModelFactory)
+        mMainViewModel = ViewModelProvider(this, mViewModelFactory)
                 .get(MainViewModel::class.java)
 
         mMainViewModel.videoFeed.observe(this, Observer { videos: List<Video> ->
-
-            if (!hasContactsPermission()) {
-                showMessage(R.string.msg_permission_get_accounts, View.GONE)
-                return@Observer
+            if (videos.isEmpty() && mMainViewModel.isSuccess) {
+                mMainViewModel.setEmptyListStatus()
             }
-
-            if (mMainViewModel.isSyncing) {
-                return@Observer
-            }
-
-            if (videos.isEmpty()) {
-                showMessage(R.string.msg_info_empty_result_set, View.GONE)
-                return@Observer
-            }
-
-            /* Update data */
             videoFeedAdapter.submitList(videos)
-            showRecyclerView()
         })
 
         /* Observe and react sync status */
-        mMainViewModel.status.observe(this, Observer { status: SyncStatus ->
+        mMainViewModel.status.observe(this, Observer { status: LiveDataState ->
             handleSyncStatus(status)
         })
 
@@ -237,6 +223,10 @@ class VideoFeedActivity : AppCompatActivity(),
     }
 
     private fun startSyncChain() {
+        if (!hasContactsPermission()) {
+            showMessage(R.string.msg_permission_get_accounts, View.GONE)
+            clearUpData()
+        }
         if (!isGooglePlayServicesAvailable) {
             acquireGooglePlayServices()
         } else if (mPrefUtils.accountName == null) {
@@ -304,36 +294,30 @@ class VideoFeedActivity : AppCompatActivity(),
         dialog.show()
     }
 
-    private fun handleSyncStatus(status: SyncStatus) {
-        val resultCode = status.resultCode
-        if (resultCode == SyncUtils.STATUS_SYNC_STARTED) {
-            showMessage(R.string.msg_info_sync_start, View.VISIBLE)
-            return
-        }
-        if (!hasContactsPermission()) {
-            setStatusIdle()
-            showMessage(R.string.msg_permission_get_accounts, View.GONE)
-            clearUpData()
-        }
-        when (resultCode) {
-            SyncUtils.STATUS_SYNC_SUCCESS -> {
-                setStatusIdle()
-                showRecyclerView()
-            }
-            SyncUtils.STATUS_SYNC_GOOGLE_PLAY_FAILURE -> {
-                val code = (status.exception as GooglePlayServicesAvailabilityIOException)
-                        .connectionStatusCode
-                showGooglePlayServicesAvailabilityErrorDialog(code)
-                setStatusIdle()
-            }
-            SyncUtils.STATUS_SYNC_AUTH_FAILURE -> {
-                val intent = (status.exception as UserRecoverableAuthIOException?)!!.intent
-                startActivityForResult(intent, REQUEST_AUTHORIZATION)
-                setStatusIdle()
-            }
-            SyncUtils.STATUS_SYNC_FAILURE -> {
-                showMessage(R.string.msg_error_sync_failure, View.GONE)
-                setStatusIdle()
+    private fun handleSyncStatus(status: LiveDataState) {
+        Log.d(TAG, status.toString())
+        when (status) {
+            InProgress -> showMessage(R.string.msg_info_sync_start, View.VISIBLE)
+            Success -> showRecyclerView()
+            EmptyList -> showMessage(R.string.msg_info_empty_result_set, View.GONE)
+            is Error -> {
+                Log.e(TAG, status.exception?.message, status.exception!!)
+                when (status.exception) {
+                    is ImmatureSyncException -> {
+                        TODO()
+                    }
+                    is GooglePlayServicesAvailabilityIOException -> {
+                        val code = status.exception.connectionStatusCode
+                        showGooglePlayServicesAvailabilityErrorDialog(code)
+                    }
+                    is UserRecoverableAuthIOException -> {
+                        val intent = status.exception.intent
+                        startActivityForResult(intent, REQUEST_AUTHORIZATION)
+                    }
+                    else -> {
+                        showMessage(R.string.msg_error_sync_failure, View.GONE)
+                    }
+                }
             }
         }
     }
@@ -354,10 +338,6 @@ class VideoFeedActivity : AppCompatActivity(),
             val intent = Intent(this, ChannelsActivity::class.java)
             startActivity(intent)
         }
-    }
-
-    private fun setStatusIdle() {
-        mMainViewModel.setStatusIdle()
     }
 
     private fun showRecyclerView() {

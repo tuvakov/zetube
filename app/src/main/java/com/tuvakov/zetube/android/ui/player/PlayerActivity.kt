@@ -21,7 +21,7 @@ import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.ui.feed.MainViewModel
-import com.tuvakov.zetube.android.ui.feed.MainViewModelFactory
+import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.FullScreenHelper
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
@@ -34,7 +34,7 @@ import javax.inject.Inject
 class PlayerActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var mMainViewModelFactory: MainViewModelFactory
+    lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mVideoId: String
     private val mFullScreenHelper = FullScreenHelper(this)
 
@@ -56,7 +56,7 @@ class PlayerActivity : AppCompatActivity() {
         (application as ZeTubeApp).appComponent.injectPlayerActivityFields(this)
 
         /* Build MainViewModel */
-        val mMainViewModel = ViewModelProvider(this, mMainViewModelFactory)
+        val mMainViewModel = ViewModelProvider(this, mViewModelFactory)
                 .get(MainViewModel::class.java)
 
         /* Get Video object from DB and check for nullness */

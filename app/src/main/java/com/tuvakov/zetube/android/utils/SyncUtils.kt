@@ -5,6 +5,7 @@ import com.google.api.services.youtube.YouTube
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
+import com.tuvakov.zetube.android.ui.channeldetail.ImmatureSyncException
 import kotlinx.coroutines.*
 import java.io.IOException
 import javax.inject.Inject
@@ -25,13 +26,13 @@ class SyncUtils @Inject constructor(
     suspend fun sync() = withContext(Dispatchers.IO) {
 
         if (!mDateTimeUtils.isSyncAllowed(mPrefUtils.lastSyncTime)) {
-            Log.d(TAG, "onHandleIntent: Immature sync")
-            throw Exception("immature-sync")
+            Log.d(TAG, "Immature sync")
+            throw ImmatureSyncException()
         }
 
         val youTubeService = mYouTubeApiUtils.youTubeService
         if (youTubeService == null) {
-            Log.d(TAG, "onHandleIntent: Couldn't get service. Probably account name is null")
+            Log.d(TAG, "Couldn't get service. Probably account name is null")
             throw Exception()
         }
 
@@ -115,20 +116,10 @@ class SyncUtils @Inject constructor(
             }
 
     companion object {
-        private const val TAG = "SyncUtils"
-
         const val SYNC_INTERVAL_HOURS = 3
-
-        const val STATUS_SYNC_IDLE = 0
-        const val STATUS_SYNC_STARTED = 10
-        const val STATUS_SYNC_SUCCESS = 11
-        const val STATUS_SYNC_FAILURE = 12
-        const val STATUS_SYNC_GOOGLE_PLAY_FAILURE = 13
-        const val STATUS_SYNC_AUTH_FAILURE = 14
-        const val STATUS_IMMATURE_SYNC = 20
-
         private const val MAX_LIMIT_SUBS: Long = 50
         private const val MAX_LIMIT_VIDEOS: Long = 10
         private const val LAST_DAY_NO = 7
+        private const val TAG = "SyncUtils"
     }
 }

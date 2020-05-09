@@ -16,15 +16,15 @@ import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModel
-import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModelFactory
 import com.tuvakov.zetube.android.ui.channeldetail.Error
 import com.tuvakov.zetube.android.ui.channeldetail.Success
+import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 
 class ChannelDescriptionFragment : Fragment() {
 
-    private lateinit var viewModelFactory: ChannelDetailViewModelFactory
+    private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: ChannelDetailViewModel
 
     /* Views */
@@ -47,7 +47,7 @@ class ChannelDescriptionFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
         activity?.let { it ->
             val app = (it.application as ZeTubeApp)
-            viewModelFactory = app.appComponent.channelDetailViewModelFactory()
+            viewModelFactory = app.appComponent.viewModelFactory()
             viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
 
             viewModel.channel.observe(viewLifecycleOwner, Observer { sub ->

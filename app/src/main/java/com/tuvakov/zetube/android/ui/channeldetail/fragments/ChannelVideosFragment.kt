@@ -14,13 +14,14 @@ import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.feed.VideoFeedAdapter
+import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 
 
 class ChannelVideosFragment : Fragment() {
 
-    private lateinit var viewModelFactory: ChannelDetailViewModelFactory
+    private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: ChannelDetailViewModel
     private val adapter = VideoFeedAdapter()
 
@@ -45,7 +46,7 @@ class ChannelVideosFragment : Fragment() {
 
         activity?.let { it ->
             val app = (it.application as ZeTubeApp)
-            viewModelFactory = app.appComponent.channelDetailViewModelFactory()
+            viewModelFactory = app.appComponent.viewModelFactory()
             viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
 
             viewModel.channelVideos.observe(viewLifecycleOwner, Observer { videos ->

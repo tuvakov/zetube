@@ -1,12 +1,13 @@
 package com.tuvakov.zetube.android.ui.channeldetail
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
 
 class ChannelDetailViewModel(private val repository: Repository) : ViewModel() {
 
@@ -59,18 +60,5 @@ class ChannelDetailViewModel(private val repository: Repository) : ViewModel() {
         val error = Error()
         _channelState.value = error
         _videosState.value = error
-    }
-}
-
-@Singleton
-class ChannelDetailViewModelFactory @Inject constructor(
-        private val repository: Repository
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(ChannelDetailViewModel::class.java)) {
-            @Suppress("UNCHECKED_CAST")
-            return ChannelDetailViewModel(repository) as T
-        }
-        throw IllegalArgumentException("Unknown ViewModel class")
     }
 }

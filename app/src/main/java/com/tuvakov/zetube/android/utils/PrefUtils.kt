@@ -10,6 +10,9 @@ class PrefUtils @Inject constructor(private val mSharedPreferences: SharedPrefer
     val accountName: String?
         get() = mSharedPreferences.getString(PREF_ACCOUNT_NAME, null)
 
+    val lastSyncTime: Long
+        get() = mSharedPreferences.getLong(PREF_LAST_SYNC_TIME, 0)
+
     fun saveAccountName(accountName: String?) {
         mSharedPreferences.edit { putString(PREF_ACCOUNT_NAME, accountName) }
     }
@@ -18,11 +21,13 @@ class PrefUtils @Inject constructor(private val mSharedPreferences: SharedPrefer
         saveAccountName(null)
     }
 
-    val lastSyncTime: Long
-        get() = mSharedPreferences.getLong(PREF_LAST_SYNC_TIME, 0)
-
     fun saveLastSyncTime(lastSyncTime: Long) {
         mSharedPreferences.edit { putLong(PREF_LAST_SYNC_TIME, lastSyncTime) }
+    }
+
+    fun emptyPreferences() {
+        deleteAccountName()
+        saveLastSyncTime(0)
     }
 
     companion object {

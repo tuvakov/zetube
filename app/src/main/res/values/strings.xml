@@ -13,6 +13,9 @@
     <string name="msg_error_no_video">
         Cannot load the video. Please go back the video feed screen and try again.
     </string>
+    <string name="msg_error_generic">
+        Error occurred. Please try again later!
+    </string>
     <string name="msg_warning_install_google_play_services">
         Please install Google Play Services.
     </string>
@@ -20,19 +23,21 @@
     <string name="msg_info_sync_start">
         Preparing your subscription feed. Please wait for a moment!
     </string>
+    <string name="msg_info_video_saved">Video is saved.</string>
+    <string name="msg_info_video_removed">Video is removed.</string>
     <string name="msg_success_sync_success"> Sync has been completed successfully. </string>
     <string name="msg_permission_get_accounts">
         This app needs to access your Google account (via Contacts) in order to fetch your YouTube
         subscription feed.
     </string>
     <string name="msg_info_loading">Loading…</string>
-    <string name="msg_info_empty_result_set">Feed is empty.</string>
+    <string name="msg_info_empty_result_set">No videos found.</string>
     <string name="msg_info_empty_channel_list">Channel list is empty.</string>
     <string name="msg_info_restart_or_man_sync">
         Please restart the app or press manual sync button at the top of the screen.
     </string>
     <string name="msg_info_sync_not_allowed">
-        Sync is allowed once in 24 hours. Please try again later.
+        Sync is allowed once in %1$d hours. Please try again later.
     </string>
     <string name="msg_info_already_syncing">Already syncing.</string>
     <string name="msg_delete_dialog">Do you confirm deleting all of the data?</string>
@@ -41,6 +46,7 @@
     <!-- Button texts -->
     <string name="btn_txt_share">Share</string>
     <string name="btn_txt_save">Save</string>
+    <string name="btn_txt_remove">Remove</string>
     <string name="btn_txt_confirm">Confirm</string>
     <string name="btn_txt_cancel">Cancel</string>
 
@@ -56,5 +62,9 @@
     <string name="nav_item_saved_videos">Saved Videos</string>
     <string name="nav_item_account">Account</string>
     <string name="nav_item_logout">Logout</string>
+
+    <!-- ChannelDetail ViewPager tab titles -->
+    <string name="tab_text_videos">Videos</string>
+    <string name="tab_text_description">Description</string>
 
 </resources>

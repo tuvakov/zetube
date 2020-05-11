@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="8dp"
-    android:background="@color/primaryDarkColor">
+    android:background="@color/primaryDarkColor"
+    android:padding="@dimen/padding_medium">
 
     <ImageView
         android:id="@+id/iv_channel_avatar"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="@dimen/width_item_channel_view_avatar"
+        android:layout_height="@dimen/height_item_channel_view_avatar"
+        android:layout_marginTop="@dimen/margin_medium"
         android:contentDescription="@string/content_description_avatar_thumbnail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -22,7 +22,7 @@
         android:id="@+id/tv_channel_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="@dimen/margin_medium"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintEnd_toEndOf="parent"

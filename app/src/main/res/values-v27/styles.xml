@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="android:statusBarColor">@color/primaryColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:itemBackground">@color/primaryColor</item>
+        <item name="android:navigationBarColor">@color/primaryColor</item>
+
         <item name="android:windowLayoutInDisplayCutoutMode">
-            shortEdges
+            default
         </item>
     </style>
-
 </resources>

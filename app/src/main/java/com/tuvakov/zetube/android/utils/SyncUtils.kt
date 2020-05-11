@@ -4,52 +4,42 @@ import android.util.Log
 import com.google.api.services.youtube.YouTube
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
-import com.tuvakov.zetube.android.repository.SubscriptionRepo
-import com.tuvakov.zetube.android.repository.VideoRepo
+import com.tuvakov.zetube.android.repository.Repository
+import com.tuvakov.zetube.android.ui.channeldetail.ImmatureSyncException
 import kotlinx.coroutines.*
 import java.io.IOException
 import javax.inject.Inject
 import javax.inject.Singleton
 
 /*
- * TODO (1): If the subscription or videos responses have more items in next pages, they should
- *           be fetched.
- *
- * TODO (2): Limit coroutine pool to 10 courtines at a time.
- *
- * TODO (3): Test sequential fetch and parallel fetch.
+ * TODO (1): Limit coroutine pool to 10 courtines at a time.
  */
 
 @Singleton
 class SyncUtils @Inject constructor(
         private val mYouTubeApiUtils: YouTubeApiUtils,
         private val mPrefUtils: PrefUtils,
-        private val mVideoRepo: VideoRepo,
-        private val mSubscriptionRepo: SubscriptionRepo,
+        private val repository: Repository,
         private val mDateTimeUtils: DateTimeUtils
 ) {
 
     suspend fun sync() = withContext(Dispatchers.IO) {
 
-        if (!mDateTimeUtils.hasDayPassed(mPrefUtils.lastSyncTime)) {
-            Log.d(TAG, "onHandleIntent: Immature sync")
-            throw Exception("immature-sync")
+        if (!mDateTimeUtils.isSyncAllowed(mPrefUtils.lastSyncTime)) {
+            Log.d(TAG, "Immature sync")
+            throw ImmatureSyncException()
         }
 
         val youTubeService = mYouTubeApiUtils.youTubeService
         if (youTubeService == null) {
-            Log.d(TAG, "onHandleIntent: Couldn't get service. Probably account name is null")
+            Log.d(TAG, "Couldn't get service. Probably account name is null")
             throw Exception()
         }
 
         val startingDay = mDateTimeUtils.getUtcEpochNDaysAgo(LAST_DAY_NO)
         val subscriptions = getSubscriptions(youTubeService)
         val videos = getVideos(youTubeService, subscriptions, startingDay)
-        mSubscriptionRepo.deleteAll()
-        // TODO: Hidden and saved videos should be excluded later.
-        mVideoRepo.deleteAll()
-        mSubscriptionRepo.bulkInsert(subscriptions)
-        mVideoRepo.bulkInsert(videos)
+        repository.insertDataAfterSync(subscriptions, videos)
         mPrefUtils.saveLastSyncTime(mDateTimeUtils.utcEpoch)
     }
 
@@ -62,12 +52,19 @@ class SyncUtils @Inject constructor(
                         .setMine(true)
                         .setMaxResults(MAX_LIMIT_SUBS)
                         .setOrder("alphabetical")
-                val subResponse = list.execute()
-                subResponse.items.map {
-                    val st = it.snippet
-                    Subscription(st.resourceId.channelId, st.title,
-                            st.description, st.thumbnails.medium.url)
+                var subResponse = list.execute()
+                val totalResults = subResponse.pageInfo.totalResults
+                val subscriptions = mutableListOf<Subscription>()
+                subscriptions.addAll(subResponse.items.map { it.toLocalSubscription() })
+
+                /* If all of the fetched subscriptions were added then there might be more
+                   in the next page. */
+                while (subscriptions.size < totalResults) {
+                    list.pageToken = subResponse.nextPageToken
+                    subResponse = list.execute()
+                    subscriptions.addAll(subResponse.items.map { it.toLocalSubscription() })
                 }
+                return@withContext subscriptions
             }
 
     @Throws(IOException::class)
@@ -99,36 +96,30 @@ class SyncUtils @Inject constructor(
                         .setMaxResults(MAX_LIMIT_VIDEOS)
                         .setPlaylistId(uploadPlayListId)
 
-                val response = list.execute()
-                val items = response.items
+                val videos = mutableListOf<Video>()
+                var added = MAX_LIMIT_VIDEOS
 
-                items.filter { it.snippet.publishedAt.value >= startingDay }.map {
-                    val st = it.snippet
-                    Video(id = st.resourceId.videoId,
-                            title = st.title,
-                            thumbnail = st.thumbnails.high.url,
-                            description = st.description,
-                            channelId = subscription.id,
-                            channelTitle = subscription.title,
-                            channelAvatar = subscription.thumbnail,
-                            publishedAt = st.publishedAt.value
-                    )
+                /* If all of the fetched videos were added then there might be
+                   more in the next page */
+                while (added == MAX_LIMIT_VIDEOS) {
+                    val response = list.execute()
+                    val items = response.items.filter {
+                        it.snippet.publishedAt.value >= startingDay
+                    }.map {
+                        it.toLocalVideo(subscription)
+                    }
+                    videos.addAll(items)
+                    added = items.size.toLong()
+                    list.pageToken = response.nextPageToken
                 }
+                return@withContext videos
             }
 
     companion object {
-        private const val TAG = "SyncUtils"
-
-        const val STATUS_SYNC_IDLE = 0
-        const val STATUS_SYNC_STARTED = 10
-        const val STATUS_SYNC_SUCCESS = 11
-        const val STATUS_SYNC_FAILURE = 12
-        const val STATUS_SYNC_GOOGLE_PLAY_FAILURE = 13
-        const val STATUS_SYNC_AUTH_FAILURE = 14
-        const val STATUS_IMMATURE_SYNC = 20
-
+        const val SYNC_INTERVAL_HOURS = 3
         private const val MAX_LIMIT_SUBS: Long = 50
-        private const val MAX_LIMIT_VIDEOS: Long = 30
+        private const val MAX_LIMIT_VIDEOS: Long = 10
         private const val LAST_DAY_NO = 7
+        private const val TAG = "SyncUtils"
     }
 }

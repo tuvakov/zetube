@@ -1,4 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="padding_activity">12dp</dimen>
+    <dimen name="elevation_standard">4dp</dimen>
+
+    <dimen name="margin_small">4dp</dimen>
+    <dimen name="margin_medium">8dp</dimen>
+    <dimen name="margin_large">16dp</dimen>
+    <dimen name="margin_xlarge">24dp</dimen>
+    <dimen name="margin_xxlarge">32dp</dimen>
+
+    <dimen name="padding_small">4dp</dimen>
+    <dimen name="padding_medium">8dp</dimen>
+    <dimen name="padding_large">16dp</dimen>
+
+    <dimen name="width_nav_logo">85dp</dimen>
+    <dimen name="height_nav_logo">85dp</dimen>
+
+    <dimen name="height_navbar_header">176dp</dimen>
+
+    <dimen name="height_video_thumbnail">200dp</dimen>
+
+    <dimen name="width_video_feed_channel_avatar">70dp</dimen>
+    <dimen name="height_video_feed_channel_avatar">70dp</dimen>
+
+    <dimen name="width_item_channel_view_avatar">100dp</dimen>
+    <dimen name="height_item_channel_view_avatar">100dp</dimen>
+
+    <dimen name="width_channel_desc_frag_avatar">150dp</dimen>
+    <dimen name="height_channel_desc_frag_avatar">150dp</dimen>
 </resources>

@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.material.navigation.NavigationView
@@ -28,11 +29,12 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlaySe
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
-import com.tuvakov.zetube.android.data.SyncStatus
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
 import kotlinx.android.synthetic.main.activity_video_feed.*
+import kotlinx.android.synthetic.main.layout_toolbar.*
 import kotlinx.android.synthetic.main.layout_video_feed.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
@@ -40,9 +42,12 @@ import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
 import java.util.*
 import javax.inject.Inject
 
-class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationView.OnNavigationItemSelectedListener {
+class VideoFeedActivity : AppCompatActivity(),
+        PermissionCallbacks,
+        NavigationView.OnNavigationItemSelectedListener {
+
     @Inject
-    lateinit var mMainViewModelFactory: MainViewModelFactory
+    lateinit var mViewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var mYouTubeApiUtils: YouTubeApiUtils
@@ -72,38 +77,48 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         setupDrawer()
 
         /* Setup the RecyclerView */
-        rv_video_feed.setHasFixedSize(true)
-        val videoFeedAdapter = VideoFeedAdapter()
+        val videoFeedAdapter = VideoFeedAdapter().also {
+            it.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
+                override fun onChanged() {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+
+                override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
+                    rv_video_feed.scrollToPosition(0)
+                }
+            })
+        }
         rv_video_feed.adapter = videoFeedAdapter
 
         /* Setup the ViewModel and start observing */
-        mMainViewModel = ViewModelProvider(this, mMainViewModelFactory)
+        mMainViewModel = ViewModelProvider(this, mViewModelFactory)
                 .get(MainViewModel::class.java)
 
         mMainViewModel.videoFeed.observe(this, Observer { videos: List<Video> ->
-
-            if (!hasContactsPermission()) {
-                showMessage(R.string.msg_permission_get_accounts, View.GONE)
-                return@Observer
+            if (videos.isEmpty() && mMainViewModel.isSuccess) {
+                mMainViewModel.setEmptyListStatus()
             }
-
-            if (mMainViewModel.isSyncing) {
-                return@Observer
-            }
-
-            if (videos.isEmpty()) {
-                showMessage(R.string.msg_info_empty_result_set, View.GONE)
-                return@Observer
-            }
-
-            /* Update data */
             videoFeedAdapter.submitList(videos)
-            showRecyclerView()
-            rv_video_feed.scrollToPosition(0)
         })
 
         /* Observe and react sync status */
-        mMainViewModel.status.observe(this, Observer { status: SyncStatus ->
+        mMainViewModel.status.observe(this, Observer { status: LiveDataState ->
             handleSyncStatus(status)
         })
 
@@ -122,10 +137,9 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.nav_feed -> mMainViewModel.loadAllVideos()
             R.id.nav_channels -> gotoChannels()
-            R.id.nav_saved_videos -> Log.d(TAG, "onNavigationItemSelected: Saved Videos")
-            else -> {
-            }
+            R.id.nav_saved_videos -> mMainViewModel.loadSavedVideos()
         }
         layout_drawer.closeDrawer(GravityCompat.START)
         return true
@@ -147,8 +161,10 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
                     Toast.makeText(this, R.string.msg_info_already_syncing,
                             Toast.LENGTH_SHORT).show()
                     return true
-                } else if (!hasDayPassed()) {
-                    Toast.makeText(this, getString(R.string.msg_info_sync_not_allowed),
+                } else if (!isSyncAllowed()) {
+                    Toast.makeText(
+                            this,
+                            getString(R.string.msg_info_sync_not_allowed, SyncUtils.SYNC_INTERVAL_HOURS),
                             Toast.LENGTH_LONG).show()
                     return true
                 }
@@ -159,17 +175,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Called when an activity launched here (specifically, AccountPicker
-     * and authorization) exits, giving you the requestCode you started it with,
-     * the resultCode it returned, and any additional data from it.
-     *
-     * @param requestCode code indicating which activity result is incoming.
-     * @param resultCode  code indicating the result of the incoming
-     * activity result.
-     * @param data        Intent (containing result data) returned by incoming
-     * activity result.
-     */
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         when (requestCode) {
@@ -200,15 +205,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Respond to requests for permissions at runtime for API 23 and above.
-     *
-     * @param requestCode  The request code passed in
-     * requestPermissions(android.app.Activity, String, int, String[])
-     * @param permissions  The requested permissions. Never null.
-     * @param grantResults The grant results for the corresponding permissions
-     * which is either PERMISSION_GRANTED or PERMISSION_DENIED. Never null.
-     */
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>,
                                             grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
@@ -226,35 +222,22 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         showMessage(R.string.msg_permission_get_accounts, View.GONE)
     }
 
-    /**
-     * Attempt to call the API, after verifying that all the preconditions are
-     * satisfied. The preconditions are: Google Play Services installed, an
-     * account was selected and the device currently has online access. If any
-     * of the preconditions are not satisfied, the app will prompt the user as
-     * appropriate.
-     */
     private fun startSyncChain() {
+        if (!hasContactsPermission()) {
+            showMessage(R.string.msg_permission_get_accounts, View.GONE)
+            clearUpData()
+        }
         if (!isGooglePlayServicesAvailable) {
             acquireGooglePlayServices()
         } else if (mPrefUtils.accountName == null) {
             chooseAccount()
         } else if (!isDeviceOnline) {
             showMessage(R.string.msg_warning_no_network, View.GONE)
-        } else if (hasDayPassed()) {
-           mMainViewModel.sync()
+        } else if (isSyncAllowed()) {
+            mMainViewModel.sync()
         }
     }
 
-    /**
-     * Attempts to set the account used with the API credentials. If an account
-     * name was previously saved it will use that one; otherwise an account
-     * picker dialog will be shown to the user. Note that the setting the
-     * account to use with the credentials object requires the app to have the
-     * GET_ACCOUNTS permission, which is requested here if it is not already
-     * present. The AfterPermissionGranted annotation indicates that this
-     * function will be rerun automatically whenever the GET_ACCOUNTS permission
-     * is granted.
-     */
     @AfterPermissionGranted(REQUEST_PERMISSION_GET_ACCOUNTS)
     private fun chooseAccount() {
         if (hasContactsPermission()) {
@@ -286,12 +269,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             return networkInfo != null && networkInfo.isConnected
         }
 
-    /**
-     * Check that Google Play services APK is installed and up to date.
-     *
-     * @return true if Google Play Services is available and up to
-     * date on this device; false otherwise.
-     */
     private val isGooglePlayServicesAvailable: Boolean
         get() {
             val apiAvailability = GoogleApiAvailability.getInstance()
@@ -299,10 +276,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
             return connectionStatusCode == ConnectionResult.SUCCESS
         }
 
-    /**
-     * Attempt to resolve a missing, out-of-date, invalid or disabled Google
-     * Play Services installation via a user dialog, if possible.
-     */
     private fun acquireGooglePlayServices() {
         val apiAvailability = GoogleApiAvailability.getInstance()
         val connectionStatusCode = apiAvailability.isGooglePlayServicesAvailable(this)
@@ -311,13 +284,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    /**
-     * Display an error dialog showing that Google Play Services is missing
-     * or out of date.
-     *
-     * @param connectionStatusCode code describing the presence (or lack of)
-     * Google Play Services on this device.
-     */
     private fun showGooglePlayServicesAvailabilityErrorDialog(connectionStatusCode: Int) {
         val apiAvailability = GoogleApiAvailability.getInstance()
         val dialog = apiAvailability.getErrorDialog(
@@ -328,36 +294,30 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         dialog.show()
     }
 
-    private fun handleSyncStatus(status: SyncStatus) {
-        val resultCode = status.resultCode
-        if (resultCode == SyncUtils.STATUS_SYNC_STARTED) {
-            showMessage(R.string.msg_info_sync_start, View.VISIBLE)
-            return
-        }
-        if (!hasContactsPermission()) {
-            setStatusIdle()
-            showMessage(R.string.msg_permission_get_accounts, View.GONE)
-            clearUpData()
-        }
-        when (resultCode) {
-            SyncUtils.STATUS_SYNC_SUCCESS -> {
-                setStatusIdle()
-                showRecyclerView()
-            }
-            SyncUtils.STATUS_SYNC_GOOGLE_PLAY_FAILURE -> {
-                val code = (status.exception as GooglePlayServicesAvailabilityIOException)
-                        .connectionStatusCode
-                showGooglePlayServicesAvailabilityErrorDialog(code)
-                setStatusIdle()
-            }
-            SyncUtils.STATUS_SYNC_AUTH_FAILURE -> {
-                val intent = (status.exception as UserRecoverableAuthIOException?)!!.intent
-                startActivityForResult(intent, REQUEST_AUTHORIZATION)
-                setStatusIdle()
-            }
-            SyncUtils.STATUS_SYNC_FAILURE -> {
-                showMessage(R.string.msg_error_sync_failure, View.GONE)
-                setStatusIdle()
+    private fun handleSyncStatus(status: LiveDataState) {
+        Log.d(TAG, status.toString())
+        when (status) {
+            InProgress -> showMessage(R.string.msg_info_sync_start, View.VISIBLE)
+            Success -> showRecyclerView()
+            EmptyList -> showMessage(R.string.msg_info_empty_result_set, View.GONE)
+            is Error -> {
+                Log.e(TAG, status.exception?.message, status.exception!!)
+                when (status.exception) {
+                    is ImmatureSyncException -> {
+                        TODO()
+                    }
+                    is GooglePlayServicesAvailabilityIOException -> {
+                        val code = status.exception.connectionStatusCode
+                        showGooglePlayServicesAvailabilityErrorDialog(code)
+                    }
+                    is UserRecoverableAuthIOException -> {
+                        val intent = status.exception.intent
+                        startActivityForResult(intent, REQUEST_AUTHORIZATION)
+                    }
+                    else -> {
+                        showMessage(R.string.msg_error_sync_failure, View.GONE)
+                    }
+                }
             }
         }
     }
@@ -380,10 +340,6 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         }
     }
 
-    private fun setStatusIdle() {
-        mMainViewModel.setStatusIdle()
-    }
-
     private fun showRecyclerView() {
         progress_circular.hide()
         tv_feedback.hide()
@@ -401,15 +357,13 @@ class VideoFeedActivity : AppCompatActivity(), PermissionCallbacks, NavigationVi
         return EasyPermissions.hasPermissions(this, Manifest.permission.GET_ACCOUNTS)
     }
 
-    private fun hasDayPassed(): Boolean {
-        return mDateTimeUtils.hasDayPassed(mPrefUtils.lastSyncTime)
+    private fun isSyncAllowed(): Boolean {
+        return mDateTimeUtils.isSyncAllowed(mPrefUtils.lastSyncTime)
     }
 
     private fun clearUpData() {
-        mPrefUtils.deleteAccountName()
-        mPrefUtils.saveLastSyncTime(0)
-        mMainViewModel.deleteAllVideos()
-        mMainViewModel.deleteAllSubscriptions()
+        mPrefUtils.emptyPreferences()
+        mMainViewModel.emptyDatabase()
         /* Set account name text view empty */
         mTextViewAccountName.text = ""
     }

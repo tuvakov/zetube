@@ -2,7 +2,6 @@ package com.tuvakov.zetube.android.ui.channels
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -10,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
+import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 import kotlinx.android.synthetic.main.layout_video_feed.*
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ChannelsActivity : AppCompatActivity() {
 
     @Inject
-    lateinit var mChannelsViewModelFactory: ChannelsViewModelFactory
+    lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var mChannelsViewModel: ChannelsViewModel
 
@@ -36,7 +36,7 @@ class ChannelsActivity : AppCompatActivity() {
         showMessage(R.string.msg_info_loading, View.VISIBLE)
 
         /* Setup view model */
-        mChannelsViewModel = ViewModelProvider(this, mChannelsViewModelFactory)
+        mChannelsViewModel = ViewModelProvider(this, viewModelFactory)
                 .get(ChannelsViewModel::class.java)
 
         /* Setup adapter and recycler view */
@@ -50,7 +50,6 @@ class ChannelsActivity : AppCompatActivity() {
 
         /* Get LiveData and setup observer */
         mChannelsViewModel.getChannels().observe(this, Observer {
-            Log.d("Channels: channel list", it.toString())
             if (it.isEmpty()) {
                 showMessage(R.string.msg_info_empty_channel_list, View.GONE)
                 return@Observer

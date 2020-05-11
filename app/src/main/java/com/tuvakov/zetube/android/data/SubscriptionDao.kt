@@ -6,8 +6,11 @@ import androidx.room.*
 @Dao
 interface SubscriptionDao {
 
-    @get: Query("SELECT * FROM subscriptions")
+    @get: Query("SELECT * FROM subscriptions ORDER BY title ASC")
     val subscriptions: LiveData<List<Subscription>>
+
+    @Query("SELECT * FROM subscriptions WHERE id = :channelId")
+    suspend fun getSubscriptionById(channelId: String): Subscription
 
     @Insert
     suspend fun insert(subscription: Subscription)

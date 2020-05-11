@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
 import com.tuvakov.zetube.android.ui.player.PlayerActivity
 
 class VideoFeedAdapter : ListAdapter<Video, VideoViewHolder>(VIDEO_COMPARATOR) {
@@ -64,6 +65,18 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         itemView.setOnClickListener {
             val intent = Intent(it.context, PlayerActivity::class.java)
             intent.putExtra(PlayerActivity.KEY_EXTRA_VIDEO_ID, video.id)
+            it.context.startActivity(intent)
+        }
+
+        /* Open ChannelDetailActivity on channel avatar click  */
+        imageViewChannelAvatar.setOnClickListener {
+            // If already in ChannelDetailActivity then don't relaunch
+            if (it.context is ChannelDetailActivity) {
+                return@setOnClickListener
+            }
+            val intent = Intent(it.context, ChannelDetailActivity::class.java)
+            intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_ID, video.channelId)
+            intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_TITLE, video.channelTitle)
             it.context.startActivity(intent)
         }
 

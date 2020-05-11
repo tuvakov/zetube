@@ -1,5 +1,6 @@
 package com.tuvakov.zetube.android.ui.channels
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Subscription
+import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
 
 class ChannelsAdapter : ListAdapter<Subscription, RecyclerView.ViewHolder>(SUBSCRIPTION_COMPARATOR) {
 
@@ -45,9 +47,10 @@ class ChannelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     init {
         view.setOnClickListener {
-//            val intent = Intent(view.context, ChannelDetailActivity::class.java)
-//            intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_ID, subscription?.id)
-//            view.context.startActivity(intent)
+            val intent = Intent(view.context, ChannelDetailActivity::class.java)
+            intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_ID, subscription?.id)
+            intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_TITLE, subscription?.title)
+            view.context.startActivity(intent)
         }
     }
 

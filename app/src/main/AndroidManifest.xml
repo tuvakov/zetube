@@ -7,36 +7,32 @@
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application
-        android:name="com.tuvakov.zetube.android.ZeTubeApp"
+        android:name=".ZeTubeApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
-        <activity
-            android:name="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+        <activity android:name=".ui.feed.VideoFeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.tuvakov.zetube.android.ui.player.PlayerActivity"
+            android:name=".ui.player.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
-            android:parentActivityName="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:parentActivityName=".ui.feed.VideoFeedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity" />
         </activity>
-
         <activity
             android:name=".ui.channels.ChannelsActivity"
             android:parentActivityName=".ui.feed.VideoFeedActivity" />
+        <activity android:name=".ui.channeldetail.ChannelDetailActivity" />
     </application>
 
 </manifest>

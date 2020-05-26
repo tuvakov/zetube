@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/primaryDarkColor"
+    android:background="@color/colorPrimaryDark"
     android:padding="@dimen/padding_medium">
 
     <ImageView
@@ -12,6 +12,7 @@
         android:layout_width="@dimen/width_item_channel_view_avatar"
         android:layout_height="@dimen/height_item_channel_view_avatar"
         android:layout_marginTop="@dimen/margin_medium"
+        android:background="@drawable/background_ripple"
         android:contentDescription="@string/content_description_avatar_thumbnail"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

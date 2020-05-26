@@ -22,11 +22,10 @@
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
-        style="@style/Widget.Custom.NavigationView"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/primaryDarkColor"
+        android:background="@color/colorPrimaryDark"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/menu_drawer" />
 

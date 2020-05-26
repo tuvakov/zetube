@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/primaryDarkColor"
+        android:background="@drawable/background_ripple"
         android:padding="@dimen/padding_small">
 
         <ImageView
@@ -26,6 +26,7 @@
             android:layout_width="@dimen/width_video_feed_channel_avatar"
             android:layout_height="@dimen/height_video_feed_channel_avatar"
             android:layout_marginTop="@dimen/margin_large"
+            android:background="@drawable/background_ripple"
             android:contentDescription="@string/content_description_avatar_thumbnail"
             app:layout_constraintStart_toStartOf="@+id/iv_video_thumbnail"
             app:layout_constraintTop_toBottomOf="@id/iv_video_thumbnail"
@@ -62,6 +63,7 @@
             android:id="@+id/iv_more"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:background="@drawable/background_ripple"
             android:src="@drawable/ic_more_vert_white_24dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_video_thumbnail"

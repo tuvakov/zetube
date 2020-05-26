@@ -1,8 +1,31 @@
 # ZeTube
 
 A YouTube client app that shows videos from only user's subscriptions.
-The app enables the user to watch YouTube videos without distractions such as recommendations comments, etc. 
-that can lead into a deep rabbit whole. All data is stored locally, no backend is involved.
+The app enables the user to watch YouTube videos without distractions such as
+recommendations comments, etc. that can lead into a deep rabbit whole. 
+All data is stored locally, no back-end is involved.
+
+<img src="screenshots/animated.gif" alt="Animated screenshot" width="350">
+
+## How it works
+
+After necessary permission (Contacts) is granted, the app fetches only last 7
+days videos for each channel in your subscriptions. User can navigate different
+sections of the app via a navigation bar in the left.\
+Synchronization is allowed after three hours from the last synchronization.
+Older videos are deleted during the synchronization. However, the user can save
+videos to prevent them being deleted during synchronization (refer above screenshot).\
+All stored data can be deleted via deleted button on right top corner of the screen.
+
+## Getting started
+
+To further customize the app:
+
+0. Download or clone this repository.
+1. Change the package name (ApplicationId) of the project.
+2. Make a new Google oAuth credentials for the app to fetch YouTube data.
+[Link](https://developers.google.com/youtube/v3/quickstart/android) to the guide page.
+3. Build and test the project.
 
 ## Libraries used
 
@@ -12,17 +35,19 @@ that can lead into a deep rabbit whole. All data is stored locally, no backend i
   - [Room][2] - ORM that manages Sqlite DB without boilerplate code and well integrated with other JetPack libraries.
 
 - Others
-  - [Dagger2][3] - for depency injection.
-  - [Glide][4] - for image loading.
-  - [YouTubeDataV3 APIs][5] - for fetching user YouTube subscription list.
-  - [Android YouTube Player][6] - for playing YouTube videos
-  - [Easy Permissions][7] - for permission handling.
- 
+  - [Kotlin Coroutines][3] - for asynchronous operations.
+  - [Dagger2][4] - for dependency injection.
+  - [Glide][5] - for image loading.
+  - [YouTubeDataV3 APIs][6] - for fetching user YouTube subscription list.
+  - [Android YouTube Player][7] - for playing YouTube videos.
+  - [Easy Permissions][8] - for permission handling.
+
  [0]: https://developer.android.com/topic/libraries/architecture/livedata
  [1]: https://developer.android.com/topic/libraries/architecture/viewmodel
  [2]: https://developer.android.com/topic/libraries/architecture/room
- [3]: https://github.com/google/dagger
- [4]: https://github.com/bumptech/glide
- [5]: https://developers.google.com/youtube/v3/getting-started
- [6]: https://github.com/PierfrancescoSoffritti/android-youtube-player
- [7]: https://github.com/googlesamples/easypermissions
+ [3]: https://kotlinlang.org/docs/reference/coroutines-overview.html
+ [4]: https://github.com/google/dagger
+ [5]: https://github.com/bumptech/glide
+ [6]: https://developers.google.com/youtube/v3/getting-started
+ [7]: https://github.com/PierfrancescoSoffritti/android-youtube-player
+ [8]: https://github.com/googlesamples/easypermissions

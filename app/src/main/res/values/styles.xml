@@ -1,40 +1,26 @@
 <resources>
 
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
-        <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
 
-        <item name="android:statusBarColor">@color/primaryColor</item>
-        <item name="android:textColor">@color/primaryTextColor</item>
-        <item name="android:itemBackground">@color/primaryColor</item>
-        <item name="android:navigationBarColor">@color/primaryColor</item>
-    </style>
-
-    <style name="ZeTubeTextButton" parent="Widget.MaterialComponents.Button.TextButton">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">wrap_content</item>
-        <item name="android:textColor">@color/colorAccent</item>
+        <item name="android:statusBarColor">@color/colorPrimary</item>
+        <item name="android:navigationBarColor">@color/colorPrimary</item>
+        <item name="android:itemBackground">@color/colorPrimary</item>
     </style>
 
     <style name="ZeTubeAlertDialog" parent="Theme.MaterialComponents.Dialog.Alert">
-        <item name="android:textColor">@color/primaryTextColor</item>
-        <item name="android:background">@color/primaryColor</item>
         <item name="buttonBarPositiveButtonStyle">@style/PositiveButtonStyle</item>
         <item name="buttonBarNegativeButtonStyle">@style/NegativeButtonStyle</item>
     </style>
 
     <style name="NegativeButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
-        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="android:textColor">@android:color/white</item>
     </style>
 
     <style name="PositiveButtonStyle" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
         <item name="android:textColor">@color/colorAccent</item>
-    </style>
-
-    <style name="Widget.Custom.NavigationView" parent="Widget.Design.NavigationView">
-        <item name="itemIconTint">@color/primaryTextColor</item>
-        <item name="itemTextColor">@color/primaryTextColor</item>
     </style>
 
 </resources>

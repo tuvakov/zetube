@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="@dimen/height_navbar_header"
-    android:background="@color/primaryColor"
+    android:background="@color/colorPrimary"
     android:elevation="@dimen/elevation_standard"
     android:theme="@style/ThemeOverlay.MaterialComponents.Dark">
 

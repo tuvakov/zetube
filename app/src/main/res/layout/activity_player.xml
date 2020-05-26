@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/primaryDarkColor"
+    android:background="@color/colorPrimaryDark"
     tools:context=".ui.player.PlayerActivity">
 
     <com.pierfrancescosoffritti.androidyoutubeplayer.core.player.views.YouTubePlayerView
@@ -55,9 +55,14 @@
 
     <Button
         android:id="@+id/btn_share"
-        style="@style/ZeTubeTextButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="@dimen/margin_medium"
+        android:background="@drawable/background_ripple"
         android:text="@string/btn_txt_share"
+        android:textColor="@color/colorAccent"
         app:icon="@drawable/ic_share_black_24dp"
         app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toStartOf="parent"
@@ -65,7 +70,12 @@
 
     <Button
         android:id="@+id/btn_save"
-        style="@style/ZeTubeTextButton"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:background="@drawable/background_ripple"
+        android:textColor="@color/colorAccent"
         app:iconTint="@color/colorAccent"
         app:layout_constraintStart_toEndOf="@id/btn_share"
         app:layout_constraintTop_toTopOf="@id/btn_share" />

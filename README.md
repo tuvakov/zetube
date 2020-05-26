@@ -2,20 +2,20 @@
 
 A YouTube client app that shows videos from only user's subscriptions.
 The app enables the user to watch YouTube videos without distractions such as
-recommendations comments, etc. that can lead into a deep rabbit whole. 
+recommendations, comments, etc. that can lead into a deep rabbit hole. 
 All data is stored locally, no back-end is involved.
 
-<img src="screenshots/animated.gif" alt="Animated screenshot" width="350">
+<img src="screenshots/animated.gif" alt="Animated Screenshot" width="350">
 
 ## How it works
 
 After necessary permission (Contacts) is granted, the app fetches only last 7
-days videos for each channel in your subscriptions. User can navigate different
+days' videos for each channel in the user's subscription list. The user can navigate different
 sections of the app via a navigation bar in the left.\
-Synchronization is allowed after three hours from the last synchronization.
+Synchronization is allowed after 3 hours from the last synchronization.
 Older videos are deleted during the synchronization. However, the user can save
-videos to prevent them being deleted during synchronization (refer above screenshot).\
-All stored data can be deleted via deleted button on right top corner of the screen.
+videos to prevent them being deleted during the synchronization (refer to above screenshot).\
+All stored data can be deleted via delete button on the right top corner of the screen.
 
 ## Getting started
 

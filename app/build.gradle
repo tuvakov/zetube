@@ -21,6 +21,9 @@ android {
         }
     }
     compileOptions {
+        // Flag to enable support for the new language APIs
+        coreLibraryDesugaringEnabled true
+
         sourceCompatibility = '1.8'
         targetCompatibility = '1.8'
     }
@@ -91,9 +94,6 @@ dependencies {
     def player = '10.0.5'
     implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:$player"
 
-    def threetenBp = '1.3.1'
-    implementation "com.jakewharton.threetenabp:threetenabp:$threetenBp"
-
     def glide = '4.12.0'
     implementation "com.github.bumptech.glide:glide:$glide"
     kapt "com.github.bumptech.glide:compiler:$glide"
@@ -122,4 +122,8 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 
     testImplementation "androidx.room:room-testing:$room"
+
+    /* Desugaring */
+    def corelib_desugar_version = '1.1.1'
+    coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$corelib_desugar_version"
 }

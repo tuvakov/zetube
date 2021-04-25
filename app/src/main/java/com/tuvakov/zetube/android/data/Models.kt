@@ -3,9 +3,9 @@ package com.tuvakov.zetube.android.data
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import org.threeten.bp.Instant
-import org.threeten.bp.ZoneId
-import org.threeten.bp.ZonedDateTime
+import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 
 @Entity(tableName = "videos")
 data class Video(

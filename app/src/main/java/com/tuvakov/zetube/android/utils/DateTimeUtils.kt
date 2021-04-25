@@ -1,7 +1,7 @@
 package com.tuvakov.zetube.android.utils
 
 import com.tuvakov.zetube.android.utils.SyncUtils.Companion.SYNC_INTERVAL_HOURS
-import org.threeten.bp.Instant
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton

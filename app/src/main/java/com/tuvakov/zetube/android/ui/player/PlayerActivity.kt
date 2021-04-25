@@ -26,8 +26,8 @@ import com.tuvakov.zetube.android.utils.FullScreenHelper
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 import kotlinx.android.synthetic.main.activity_player.*
-import org.threeten.bp.format.DateTimeFormatter
-import org.threeten.bp.format.FormatStyle
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.inject.Inject
 
 // TODO: Check if device is offline

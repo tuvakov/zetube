@@ -5,6 +5,8 @@
     android:layout_height="match_parent"
     tools:context=".ui.channeldetail.fragments.ChannelVideosFragment">
 
-    <include layout="@layout/layout_video_feed" />
+    <include
+        android:id="@+id/container"
+        layout="@layout/layout_video_feed" />
 
 </FrameLayout>

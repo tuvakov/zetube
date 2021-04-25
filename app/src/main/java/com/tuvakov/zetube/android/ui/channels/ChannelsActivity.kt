@@ -9,10 +9,10 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
+import com.tuvakov.zetube.android.databinding.LayoutVideoFeedBinding
 import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
-import kotlinx.android.synthetic.main.layout_video_feed.*
 import javax.inject.Inject
 
 class ChannelsActivity : AppCompatActivity() {
@@ -21,10 +21,12 @@ class ChannelsActivity : AppCompatActivity() {
     lateinit var viewModelFactory: ViewModelFactory
 
     private lateinit var mChannelsViewModel: ChannelsViewModel
+    private lateinit var binding: LayoutVideoFeedBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.layout_video_feed)
+        binding = LayoutVideoFeedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Inject dependencies
         (application as ZeTubeApp).appComponent.injectChannelsActivity(this)
@@ -41,12 +43,12 @@ class ChannelsActivity : AppCompatActivity() {
 
         /* Setup adapter and recycler view */
         val adapter = ChannelsAdapter()
-        rv_video_feed.adapter = adapter
+        binding.rvVideoFeed.adapter = adapter
 
         /* Set span count */
         val orientation = resources.configuration.orientation
         val spanCount = if (orientation == Configuration.ORIENTATION_PORTRAIT) 3 else 6
-        rv_video_feed.layoutManager = GridLayoutManager(this, spanCount)
+        binding.rvVideoFeed.layoutManager = GridLayoutManager(this, spanCount)
 
         /* Get LiveData and setup observer */
         mChannelsViewModel.getChannels().observe(this, Observer {
@@ -60,15 +62,19 @@ class ChannelsActivity : AppCompatActivity() {
     }
 
     private fun showRecyclerView() {
-        progress_circular.hide()
-        tv_feedback.hide()
-        rv_video_feed.show()
+        with(binding) {
+            progressCircular.hide()
+            tvFeedback.hide()
+            rvVideoFeed.show()
+        }
     }
 
     private fun showMessage(messageStringId: Int, progressBarVisibility: Int) {
-        rv_video_feed.show()
-        tv_feedback.hide()
-        tv_feedback.setText(messageStringId)
-        progress_circular.visibility = progressBarVisibility
+        with(binding) {
+            rvVideoFeed.show()
+            tvFeedback.hide()
+            tvFeedback.setText(messageStringId)
+            progressCircular.visibility = progressBarVisibility
+        }
     }
 }

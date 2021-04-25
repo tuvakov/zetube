@@ -6,15 +6,13 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Subscription
+import com.tuvakov.zetube.android.databinding.FragmentChannelDescriptionBinding
 import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModel
 import com.tuvakov.zetube.android.ui.channeldetail.Error
 import com.tuvakov.zetube.android.ui.channeldetail.Success
@@ -27,20 +25,12 @@ class ChannelDescriptionFragment : Fragment() {
     private lateinit var viewModelFactory: ViewModelFactory
     private lateinit var viewModel: ChannelDetailViewModel
 
-    /* Views */
-    private lateinit var avatar: ImageView
-    private lateinit var title: TextView
-    private lateinit var description: TextView
-    private lateinit var message: TextView
+    private lateinit var binding: FragmentChannelDescriptionBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_channel_description, container, false)
-        avatar = v.findViewById(R.id.iv_channel_avatar)
-        title = v.findViewById(R.id.tv_channel_title)
-        description = v.findViewById(R.id.tv_channel_description)
-        message = v.findViewById(R.id.tv_feedback)
-        return v
+                              savedInstanceState: Bundle?): View {
+        binding = FragmentChannelDescriptionBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -50,18 +40,16 @@ class ChannelDescriptionFragment : Fragment() {
             viewModelFactory = app.appComponent.viewModelFactory()
             viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
 
-            viewModel.channel.observe(viewLifecycleOwner, Observer { sub ->
-                populateView(sub)
-            })
+            viewModel.channel.observe(viewLifecycleOwner, { sub -> populateView(sub) })
 
-            viewModel.channelState.observe(viewLifecycleOwner, Observer {
+            viewModel.channelState.observe(viewLifecycleOwner, {
                 when (it) {
                     Success -> {
-                        message.hide()
+                        binding.tvFeedback.hide()
                     }
                     is Error -> {
-                        message.setText(R.string.msg_error_generic)
-                        message.show()
+                        binding.tvFeedback.setText(R.string.msg_error_generic)
+                        binding.tvFeedback.show()
                     }
                 }
             })
@@ -69,14 +57,16 @@ class ChannelDescriptionFragment : Fragment() {
     }
 
     private fun populateView(sub: Subscription) {
-        title.text = sub.title
-        description.text = sub.description
-        Glide.with(this)
-                .load(sub.thumbnail)
-                .centerCrop()
-                .circleCrop()
-                .placeholder(ColorDrawable(Color.GRAY))
-                .into(avatar)
+        with(binding) {
+            tvChannelTitle.text = sub.title
+            tvChannelDescription.text = sub.description
+            Glide.with(this@ChannelDescriptionFragment)
+                    .load(sub.thumbnail)
+                    .centerCrop()
+                    .circleCrop()
+                    .placeholder(ColorDrawable(Color.GRAY))
+                    .into(ivChannelAvatar)
+        }
     }
 
     companion object {

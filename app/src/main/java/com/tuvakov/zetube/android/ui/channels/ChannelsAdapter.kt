@@ -4,22 +4,20 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Subscription
+import com.tuvakov.zetube.android.databinding.ItemViewChannelBinding
 import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
 
 class ChannelsAdapter : ListAdapter<Subscription, RecyclerView.ViewHolder>(SUBSCRIPTION_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return ChannelViewHolder.create(parent)
+        val binding = ItemViewChannelBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return ChannelViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -40,38 +38,30 @@ class ChannelsAdapter : ListAdapter<Subscription, RecyclerView.ViewHolder>(SUBSC
     }
 }
 
-class ChannelViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-    private val avatar: ImageView = view.findViewById(R.id.iv_channel_avatar)
-    private val title: TextView = view.findViewById(R.id.tv_channel_title)
+class ChannelViewHolder(
+        private val vBinding: ItemViewChannelBinding
+) : RecyclerView.ViewHolder(vBinding.root) {
+
     private var subscription: Subscription? = null
 
     init {
-        view.setOnClickListener {
-            val intent = Intent(view.context, ChannelDetailActivity::class.java)
+        vBinding.root.setOnClickListener {
+            val intent = Intent(it.context, ChannelDetailActivity::class.java)
             intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_ID, subscription?.id)
             intent.putExtra(ChannelDetailActivity.EXTRA_CHANNEL_TITLE, subscription?.title)
-            view.context.startActivity(intent)
+            it.context.startActivity(intent)
         }
     }
 
     fun bind(subscription: Subscription) {
         this.subscription = subscription
-        title.text = subscription.title
+        vBinding.tvChannelTitle.text = subscription.title
 
-        Glide.with(avatar.context)
+        Glide.with(vBinding.root.context)
                 .load(subscription.thumbnail)
                 .placeholder(ColorDrawable(Color.GRAY))
                 .centerCrop()
                 .circleCrop()
-                .into(avatar)
-    }
-
-    companion object {
-        fun create(parent: ViewGroup): ChannelViewHolder {
-            val view = LayoutInflater.from(parent.context).inflate(
-                    R.layout.item_view_channel, parent, false
-            )
-            return ChannelViewHolder(view)
-        }
+                .into(vBinding.ivChannelAvatar)
     }
 }

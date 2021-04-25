@@ -30,12 +30,10 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.databinding.ActivityVideoFeedBinding
 import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
-import kotlinx.android.synthetic.main.activity_video_feed.*
-import kotlinx.android.synthetic.main.layout_toolbar.*
-import kotlinx.android.synthetic.main.layout_video_feed.*
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
@@ -60,51 +58,53 @@ class VideoFeedActivity : AppCompatActivity(),
 
     private lateinit var mCredential: GoogleAccountCredential
     private lateinit var mMainViewModel: MainViewModel
+    private lateinit var binding: ActivityVideoFeedBinding
     private lateinit var mTextViewAccountName: TextView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_video_feed)
+        binding = ActivityVideoFeedBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Inject fields
         (application as ZeTubeApp).appComponent.injectVideoFeedActivityFields(this)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.lToolbar.toolbar)
 
         /* Setup navigation and drawer */
-        nav_view.setNavigationItemSelectedListener(this)
-        mTextViewAccountName = nav_view.getHeaderView(0).findViewById(R.id.tv_nav_account)
+        binding.navView.setNavigationItemSelectedListener(this)
+        mTextViewAccountName = binding.navView.getHeaderView(0).findViewById(R.id.tv_nav_account)
         setupDrawer()
 
         /* Setup the RecyclerView */
         val videoFeedAdapter = VideoFeedAdapter().also {
             it.registerAdapterDataObserver(object : RecyclerView.AdapterDataObserver() {
                 override fun onChanged() {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
 
                 override fun onItemRangeRemoved(positionStart: Int, itemCount: Int) {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
 
                 override fun onItemRangeMoved(fromPosition: Int, toPosition: Int, itemCount: Int) {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
 
                 override fun onItemRangeInserted(positionStart: Int, itemCount: Int) {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
 
                 override fun onItemRangeChanged(positionStart: Int, itemCount: Int) {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
 
                 override fun onItemRangeChanged(positionStart: Int, itemCount: Int, payload: Any?) {
-                    rv_video_feed.scrollToPosition(0)
+                    binding.lVideoFeed.rvVideoFeed.scrollToPosition(0)
                 }
             })
         }
-        rv_video_feed.adapter = videoFeedAdapter
+        binding.lVideoFeed.rvVideoFeed.adapter = videoFeedAdapter
 
         /* Setup the ViewModel and start observing */
         mMainViewModel = ViewModelProvider(this, mViewModelFactory)
@@ -128,8 +128,8 @@ class VideoFeedActivity : AppCompatActivity(),
     }
 
     override fun onBackPressed() {
-        if (layout_drawer.isDrawerOpen(GravityCompat.START)) {
-            layout_drawer.closeDrawer(GravityCompat.START)
+        if (binding.layoutDrawer.isDrawerOpen(GravityCompat.START)) {
+            binding.layoutDrawer.closeDrawer(GravityCompat.START)
         } else {
             super.onBackPressed()
         }
@@ -141,7 +141,7 @@ class VideoFeedActivity : AppCompatActivity(),
             R.id.nav_channels -> gotoChannels()
             R.id.nav_saved_videos -> mMainViewModel.loadSavedVideos()
         }
-        layout_drawer.closeDrawer(GravityCompat.START)
+        binding.layoutDrawer.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -323,9 +323,11 @@ class VideoFeedActivity : AppCompatActivity(),
     }
 
     private fun setupDrawer() {
-        val toggle = ActionBarDrawerToggle(this, layout_drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close)
-        layout_drawer.addDrawerListener(toggle)
+        val toggle = ActionBarDrawerToggle(this, binding.layoutDrawer,
+                binding.lToolbar.toolbar, R.string.navigation_drawer_open,
+                R.string.navigation_drawer_close
+        )
+        binding.layoutDrawer.addDrawerListener(toggle)
         toggle.syncState()
 
         /* Set up account name in navigation header */
@@ -341,16 +343,21 @@ class VideoFeedActivity : AppCompatActivity(),
     }
 
     private fun showRecyclerView() {
-        progress_circular.hide()
-        tv_feedback.hide()
-        rv_video_feed.show()
+        with(binding.lVideoFeed) {
+            progressCircular.hide()
+            tvFeedback.hide()
+            rvVideoFeed.show()
+        }
     }
 
     private fun showMessage(messageStringId: Int, progressBarVisibility: Int = View.GONE) {
-        rv_video_feed.hide()
-        tv_feedback.show()
-        tv_feedback.setText(messageStringId)
-        progress_circular.visibility = progressBarVisibility
+        with(binding.lVideoFeed) {
+            rvVideoFeed.hide()
+            tvFeedback.show()
+            tvFeedback.setText(messageStringId)
+            progressCircular.visibility = progressBarVisibility
+
+        }
     }
 
     private fun hasContactsPermission(): Boolean {

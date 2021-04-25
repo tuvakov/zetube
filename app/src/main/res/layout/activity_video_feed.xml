@@ -14,9 +14,13 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <include layout="@layout/layout_toolbar" />
+        <include
+            android:id="@+id/l_toolbar"
+            layout="@layout/layout_toolbar" />
 
-        <include layout="@layout/layout_video_feed" />
+        <include
+            android:id="@+id/l_video_feed"
+            layout="@layout/layout_video_feed" />
 
     </LinearLayout>
 

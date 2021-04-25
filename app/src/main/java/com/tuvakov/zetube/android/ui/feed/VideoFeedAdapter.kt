@@ -8,22 +8,22 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import android.widget.PopupMenu
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.databinding.ItemVideoFeedBinding
 import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
 import com.tuvakov.zetube.android.ui.player.PlayerActivity
 
 class VideoFeedAdapter : ListAdapter<Video, VideoViewHolder>(VIDEO_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VideoViewHolder {
-        return VideoViewHolder.inflate(parent)
+        val binding = ItemVideoFeedBinding.inflate(LayoutInflater.from(parent.context))
+        return VideoViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: VideoViewHolder, position: Int) {
@@ -48,14 +48,9 @@ class VideoFeedAdapter : ListAdapter<Video, VideoViewHolder>(VIDEO_COMPARATOR) {
     }
 }
 
-class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
-    /* Views */
-    private val imageViewVideoThumbnail: ImageView = itemView.findViewById(R.id.iv_video_thumbnail)
-    private val textViewTitle: TextView = itemView.findViewById(R.id.tv_video_title)
-    private val textViewInfo: TextView = itemView.findViewById(R.id.tv_video_info)
-    private val imageViewChannelAvatar: ImageView = itemView.findViewById(R.id.iv_channel_avatar)
-    private val imageViewMore = itemView.findViewById<ImageView>(R.id.iv_more)
+class VideoViewHolder(
+        private val vBinding: ItemVideoFeedBinding
+) : RecyclerView.ViewHolder(vBinding.root) {
 
     private lateinit var video: Video
 
@@ -69,7 +64,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         /* Open ChannelDetailActivity on channel avatar click  */
-        imageViewChannelAvatar.setOnClickListener {
+        vBinding.ivChannelAvatar.setOnClickListener {
             // If already in ChannelDetailActivity then don't relaunch
             if (it.context is ChannelDetailActivity) {
                 return@setOnClickListener
@@ -81,7 +76,7 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         /* Show pop-up menu on 'more' icon click */
-        imageViewMore.setOnClickListener { view: View ->
+        vBinding.ivMore.setOnClickListener { view: View ->
             val popup = PopupMenu(view.context, view)
             popup.setOnMenuItemClickListener { item: MenuItem ->
                 if (item.itemId == R.id.menu_item_share) {
@@ -103,29 +98,21 @@ class VideoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     fun bind(video: Video) {
         this.video = video
-        Glide.with(imageViewChannelAvatar.context)
+        Glide.with(vBinding.root.context)
                 .load(video.channelAvatar)
                 .centerCrop()
                 .circleCrop()
                 .placeholder(ColorDrawable(Color.GRAY))
-                .into(imageViewChannelAvatar)
+                .into(vBinding.ivChannelAvatar)
 
-        Glide.with(imageViewVideoThumbnail.context)
+        Glide.with(vBinding.root.context)
                 .load(video.thumbnail)
                 .centerCrop()
                 .placeholder(ColorDrawable(Color.GRAY))
-                .into(imageViewVideoThumbnail)
+                .into(vBinding.ivVideoThumbnail)
 
-        textViewInfo.text = String.format("%s \u2022 ", video.channelTitle)
-        textViewTitle.text = video.title
-        textViewInfo.append(DateUtils.getRelativeTimeSpanString(video.publishedAt))
-    }
-
-    companion object {
-        fun inflate(parent: ViewGroup): VideoViewHolder {
-            val itemView = LayoutInflater.from(parent.context)
-                    .inflate(R.layout.item_video_feed, parent, false)
-            return VideoViewHolder(itemView)
-        }
+        vBinding.tvVideoInfo.text = String.format("%s \u2022 ", video.channelTitle)
+        vBinding.tvVideoTitle.text = video.title
+        vBinding.tvVideoInfo.append(DateUtils.getRelativeTimeSpanString(video.publishedAt))
     }
 }

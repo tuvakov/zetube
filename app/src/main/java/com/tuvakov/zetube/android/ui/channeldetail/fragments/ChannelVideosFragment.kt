@@ -4,14 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
-import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.RecyclerView
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
+import com.tuvakov.zetube.android.databinding.FragmentChannelVideosBinding
 import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.feed.VideoFeedAdapter
 import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
@@ -25,35 +23,26 @@ class ChannelVideosFragment : Fragment() {
     private lateinit var viewModel: ChannelDetailViewModel
     private val adapter = VideoFeedAdapter()
 
-    /* Views */
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var tvFeedback: TextView
-    private lateinit var progressBar: ProgressBar
-
+    private lateinit var binding: FragmentChannelVideosBinding
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
-        val v = inflater.inflate(R.layout.fragment_channel_videos, container, false)
-        tvFeedback = v.findViewById(R.id.tv_feedback)
-        progressBar = v.findViewById(R.id.progress_circular)
-        recyclerView = v.findViewById(R.id.rv_video_feed)
-        recyclerView.adapter = adapter
-        return v
+                              savedInstanceState: Bundle?): View {
+        binding = FragmentChannelVideosBinding.inflate(layoutInflater, container, false)
+        binding.container.rvVideoFeed.adapter = adapter
+        return binding.root
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        activity?.let { it ->
+        requireActivity().let { it ->
             val app = (it.application as ZeTubeApp)
             viewModelFactory = app.appComponent.viewModelFactory()
             viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
 
-            viewModel.channelVideos.observe(viewLifecycleOwner, Observer { videos ->
-                adapter.submitList(videos)
-            })
+            viewModel.channelVideos.observe(viewLifecycleOwner, { videos -> adapter.submitList(videos) })
 
-            viewModel.videosState.observe(viewLifecycleOwner, Observer {
+            viewModel.videosState.observe(viewLifecycleOwner, {
                 when (it) {
                     Success -> {
                         showRecyclerView()
@@ -74,18 +63,18 @@ class ChannelVideosFragment : Fragment() {
 
     /* TODO: This logic is repeated in several places. Try to generalize. */
     private fun showRecyclerView() {
-        progressBar.hide()
-        tvFeedback.hide()
-        recyclerView.show()
+        with(binding.container) {
+            progressCircular.hide()
+            tvFeedback.hide()
+            rvVideoFeed.show()
+        }
     }
 
     private fun showMessage(stringId: Int, showProgressBar: Boolean = false) {
-        recyclerView.hide()
-        tvFeedback.setText(stringId)
-        if (showProgressBar) {
-            progressBar.show()
-        } else {
-            progressBar.hide()
+        with(binding.container) {
+            rvVideoFeed.hide()
+            tvFeedback.setText(stringId)
+            progressCircular.isVisible = showProgressBar
         }
     }
 

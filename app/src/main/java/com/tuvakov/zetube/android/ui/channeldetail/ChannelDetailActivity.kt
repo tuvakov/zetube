@@ -7,15 +7,18 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
-import kotlinx.android.synthetic.main.layout_toolbar.*
+import com.tuvakov.zetube.android.databinding.ActivityChannelDetailBinding
 
 class ChannelDetailActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityChannelDetailBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_channel_detail)
+        binding = ActivityChannelDetailBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        setSupportActionBar(toolbar)
+        setSupportActionBar(binding.lToolbar.toolbar)
 
         val sectionsPagerAdapter = SectionsPagerAdapter(this, supportFragmentManager)
         val viewPager: ViewPager = findViewById(R.id.view_pager)

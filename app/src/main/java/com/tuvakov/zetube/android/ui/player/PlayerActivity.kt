@@ -20,12 +20,12 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrC
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Video
+import com.tuvakov.zetube.android.databinding.ActivityPlayerBinding
 import com.tuvakov.zetube.android.ui.feed.MainViewModel
 import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.FullScreenHelper
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
-import kotlinx.android.synthetic.main.activity_player.*
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
@@ -36,11 +36,13 @@ class PlayerActivity : AppCompatActivity() {
     @Inject
     lateinit var mViewModelFactory: ViewModelFactory
     private lateinit var mVideoId: String
+    private lateinit var binding: ActivityPlayerBinding
     private val mFullScreenHelper = FullScreenHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player)
+        binding = ActivityPlayerBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         /* Check for intent and video id extra */
         if (intent == null || !intent.hasExtra(KEY_EXTRA_VIDEO_ID)) {
@@ -68,10 +70,10 @@ class PlayerActivity : AppCompatActivity() {
         /* If activity is created in landscape orientation, then force to switch landscape mode. */
         val orientation = baseContext.resources.configuration.orientation
         if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            youtube_player_view.enterFullScreen()
+            binding.youtubePlayerView.enterFullScreen()
         }
 
-        btn_share.setOnClickListener {
+        binding.btnShare.setOnClickListener {
             val videoLink = VIDEO_BASE_LINK + mVideoId
             val intent = Intent(Intent.ACTION_SEND)
             intent.type = "text/plain"
@@ -81,7 +83,7 @@ class PlayerActivity : AppCompatActivity() {
             }
         }
 
-        btn_save.setOnClickListener {
+        binding.btnSave.setOnClickListener {
             video.isSaved = !video.isSaved
             val msg = if (video.isSaved) {
                 R.string.msg_info_video_saved
@@ -95,8 +97,8 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     override fun onBackPressed() {
-        if (youtube_player_view.isFullScreen())
-            youtube_player_view.exitFullScreen()
+        if (binding.youtubePlayerView.isFullScreen())
+            binding.youtubePlayerView.exitFullScreen()
         else
             super.onBackPressed()
     }
@@ -104,15 +106,15 @@ class PlayerActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            youtube_player_view.enterFullScreen()
+            binding.youtubePlayerView.enterFullScreen()
         } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            youtube_player_view.exitFullScreen()
+            binding.youtubePlayerView.exitFullScreen()
         }
     }
 
     private fun initYoutubePlayerView() {
-        lifecycle.addObserver(youtube_player_view)
-        youtube_player_view.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
+        lifecycle.addObserver(binding.youtubePlayerView)
+        binding.youtubePlayerView.addYouTubePlayerListener(object : AbstractYouTubePlayerListener() {
             override fun onReady(youTubePlayer: YouTubePlayer) {
                 youTubePlayer.loadOrCueVideo(lifecycle, mVideoId, 0f)
                 addFullScreenListenerToPlayer()
@@ -121,7 +123,7 @@ class PlayerActivity : AppCompatActivity() {
     }
 
     private fun addFullScreenListenerToPlayer() {
-        youtube_player_view.addFullScreenListener(object : YouTubePlayerFullScreenListener {
+        binding.youtubePlayerView.addFullScreenListener(object : YouTubePlayerFullScreenListener {
             override fun onYouTubePlayerEnterFullScreen() {
                 requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
                 mFullScreenHelper.enterFullScreen()
@@ -138,43 +140,45 @@ class PlayerActivity : AppCompatActivity() {
         val publishedAt = video.getLocalDateTimePublishedAt()
                 .format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
         val videoInfo = String.format("%s \u2022 %s", video.channelTitle, publishedAt)
-        tv_video_title.text = video.title
-        tv_video_info.text = videoInfo
-        tv_video_description.text = video.description
+        binding.tvVideoTitle.text = video.title
+        binding.tvVideoInfo.text = videoInfo
+        binding.tvVideoDescription.text = video.description
         setSaveButton(video)
         Glide.with(this)
                 .load(video.channelAvatar)
                 .centerCrop()
                 .circleCrop()
                 .placeholder(ColorDrawable(Color.GRAY))
-                .into(iv_channel_avatar)
+                .into(binding.ivChannelAvatar)
     }
 
     private fun setSaveButton(video: Video) {
         if (video.isSaved) {
-            btn_save.setText(R.string.btn_txt_remove)
+            binding.btnSave.setText(R.string.btn_txt_remove)
             val icon = AppCompatResources.getDrawable(this, R.drawable.ic_remove_white_24dp)
-            (btn_save as MaterialButton).icon = icon
+            (binding.btnSave as MaterialButton).icon = icon
         } else {
-            btn_save.setText(R.string.btn_txt_save)
+            binding.btnSave.setText(R.string.btn_txt_save)
             val icon = AppCompatResources.getDrawable(this, R.drawable.ic_add_white_24dp)
-            (btn_save as MaterialButton).icon = icon
+            (binding.btnSave as MaterialButton).icon = icon
         }
     }
 
     private fun showErrorMessage() {
         hideViews()
-        tv_error_message.show()
+        binding.tvErrorMessage.show()
     }
 
     private fun hideViews() {
-        iv_channel_avatar.hide()
-        btn_share.hide()
-        btn_save.hide()
-        tv_video_title.hide()
-        tv_video_info.hide()
-        tv_video_description.hide()
-        youtube_player_view.hide()
+        with(binding) {
+            ivChannelAvatar.hide()
+            btnSave.hide()
+            btnShare.hide()
+            tvVideoTitle.hide()
+            tvVideoInfo.hide()
+            tvVideoDescription.hide()
+            youtubePlayerView.hide()
+        }
     }
 
     companion object {

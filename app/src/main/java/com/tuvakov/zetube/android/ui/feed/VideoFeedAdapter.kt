@@ -66,7 +66,7 @@ class VideoViewHolder(
         /* Open ChannelDetailActivity on channel avatar click  */
         vBinding.ivChannelAvatar.setOnClickListener {
             // If already in ChannelDetailActivity then don't relaunch
-            if (it.context is ChannelDetailActivity) {
+            if (it.context !is VideoFeedActivity) {
                 return@setOnClickListener
             }
             val intent = Intent(it.context, ChannelDetailActivity::class.java)

@@ -11,13 +11,14 @@ import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeScopes
 import com.google.api.services.youtube.model.PlaylistItem
 import com.tuvakov.zetube.android.R
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.*
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class YouTubeApiUtils @Inject internal constructor(
-        private val mContext: Context,
+        @ApplicationContext private val mContext: Context,
         private val mPrefUtils: PrefUtils
 ) {
     val youTubeService: YouTube?

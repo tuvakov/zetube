@@ -3,24 +3,20 @@ package com.tuvakov.zetube.android.ui.channels
 import android.content.res.Configuration
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.databinding.LayoutVideoFeedBinding
-import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
-import javax.inject.Inject
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChannelsActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var viewModelFactory: ViewModelFactory
-
-    private lateinit var mChannelsViewModel: ChannelsViewModel
+    private val mChannelsViewModel: ChannelsViewModel by viewModels()
     private lateinit var binding: LayoutVideoFeedBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,18 +24,11 @@ class ChannelsActivity : AppCompatActivity() {
         binding = LayoutVideoFeedBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // Inject dependencies
-        (application as ZeTubeApp).appComponent.injectChannelsActivity(this)
-
         /* Setup action bar title */
         supportActionBar?.setTitle(R.string.nav_item_channels)
 
         // Show loading message
         showMessage(R.string.msg_info_loading, View.VISIBLE)
-
-        /* Setup view model */
-        mChannelsViewModel = ViewModelProvider(this, viewModelFactory)
-                .get(ChannelsViewModel::class.java)
 
         /* Setup adapter and recycler view */
         val adapter = ChannelsAdapter()

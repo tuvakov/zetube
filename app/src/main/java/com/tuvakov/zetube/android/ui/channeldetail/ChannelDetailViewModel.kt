@@ -7,9 +7,14 @@ import androidx.lifecycle.viewModelScope
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class ChannelDetailViewModel(private val repository: Repository) : ViewModel() {
+@HiltViewModel
+class ChannelDetailViewModel @Inject constructor(
+        private val repository: Repository
+) : ViewModel() {
 
     private val _channel = MutableLiveData<Subscription>()
     private val _channelVideos = MutableLiveData<List<Video>>()

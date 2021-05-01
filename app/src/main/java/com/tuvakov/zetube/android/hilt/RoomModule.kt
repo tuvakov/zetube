@@ -1,33 +1,35 @@
-package com.tuvakov.zetube.android.dagger
+package com.tuvakov.zetube.android.hilt
 
-import android.app.Application
+import android.content.Context
 import androidx.room.Room
 import com.tuvakov.zetube.android.data.SubscriptionDao
 import com.tuvakov.zetube.android.data.VideoDao
 import com.tuvakov.zetube.android.data.ZeTubeDatabase
 import dagger.Module
 import dagger.Provides
+import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
+import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
 @Module
+@InstallIn(SingletonComponent::class)
 internal object RoomModule {
-    @JvmStatic
+
     @Provides
     @Singleton
-    fun provideRoomDb(application: Application): ZeTubeDatabase {
+    fun provideRoomDb(@ApplicationContext application: Context): ZeTubeDatabase {
         return Room.databaseBuilder(application, ZeTubeDatabase::class.java, "zetube_db")
                 .fallbackToDestructiveMigration()
                 .build()
     }
 
-    @JvmStatic
     @Provides
     @Singleton
     fun provideSubscriptionDao(database: ZeTubeDatabase): SubscriptionDao {
         return database.subscriptionDao
     }
 
-    @JvmStatic
     @Provides
     @Singleton
     fun provideVideoDao(database: ZeTubeDatabase): VideoDao {

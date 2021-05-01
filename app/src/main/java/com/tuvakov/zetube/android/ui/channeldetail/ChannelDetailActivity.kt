@@ -1,15 +1,18 @@
 package com.tuvakov.zetube.android.ui.channeldetail
 
 import android.os.Bundle
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.ViewModelProvider
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.databinding.ActivityChannelDetailBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChannelDetailActivity : AppCompatActivity() {
+
+    private val viewModel: ChannelDetailViewModel by viewModels()
 
     private lateinit var binding: ActivityChannelDetailBinding
 
@@ -25,11 +28,6 @@ class ChannelDetailActivity : AppCompatActivity() {
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.layout_tabs)
         tabs.setupWithViewPager(viewPager)
-
-        /* Setup view model */
-        val viewModelFactory = (application as ZeTubeApp).appComponent.viewModelFactory()
-        val viewModel = ViewModelProvider(this, viewModelFactory)
-                .get(ChannelDetailViewModel::class.java)
 
         if (intent == null || !intent.hasExtra(EXTRA_CHANNEL_ID)) {
             viewModel.setErrorOnAllStates()

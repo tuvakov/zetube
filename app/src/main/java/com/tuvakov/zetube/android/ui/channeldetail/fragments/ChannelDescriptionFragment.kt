@@ -7,23 +7,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.databinding.FragmentChannelDescriptionBinding
 import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModel
 import com.tuvakov.zetube.android.ui.channeldetail.Error
 import com.tuvakov.zetube.android.ui.channeldetail.Success
-import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChannelDescriptionFragment : Fragment() {
 
-    private lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ChannelDetailViewModel
+    private val viewModel: ChannelDetailViewModel by activityViewModels()
 
     private lateinit var binding: FragmentChannelDescriptionBinding
 
@@ -33,27 +32,22 @@ class ChannelDescriptionFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        activity?.let { it ->
-            val app = (it.application as ZeTubeApp)
-            viewModelFactory = app.appComponent.viewModelFactory()
-            viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            viewModel.channel.observe(viewLifecycleOwner, { sub -> populateView(sub) })
+        viewModel.channel.observe(viewLifecycleOwner, { sub -> populateView(sub) })
 
-            viewModel.channelState.observe(viewLifecycleOwner, {
-                when (it) {
-                    Success -> {
-                        binding.tvFeedback.hide()
-                    }
-                    is Error -> {
-                        binding.tvFeedback.setText(R.string.msg_error_generic)
-                        binding.tvFeedback.show()
-                    }
+        viewModel.channelState.observe(viewLifecycleOwner, {
+            when (it) {
+                Success -> {
+                    binding.tvFeedback.hide()
                 }
-            })
-        }
+                is Error -> {
+                    binding.tvFeedback.setText(R.string.msg_error_generic)
+                    binding.tvFeedback.show()
+                }
+            }
+        })
     }
 
     private fun populateView(sub: Subscription) {

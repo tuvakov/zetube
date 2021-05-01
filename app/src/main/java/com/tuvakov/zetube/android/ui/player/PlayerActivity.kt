@@ -8,9 +8,9 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.google.android.material.button.MaterialButton
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.YouTubePlayer
@@ -18,26 +18,25 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.Abs
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.listeners.YouTubePlayerFullScreenListener
 import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrCueVideo
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.databinding.ActivityPlayerBinding
 import com.tuvakov.zetube.android.ui.feed.MainViewModel
-import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.FullScreenHelper
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import javax.inject.Inject
 
 // TODO: Check if device is offline
+@AndroidEntryPoint
 class PlayerActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var mViewModelFactory: ViewModelFactory
+    private val mFullScreenHelper = FullScreenHelper(this)
+    private val mainViewModel: MainViewModel by viewModels()
+
     private lateinit var mVideoId: String
     private lateinit var binding: ActivityPlayerBinding
-    private val mFullScreenHelper = FullScreenHelper(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -54,15 +53,8 @@ class PlayerActivity : AppCompatActivity() {
         // Get video id extra
         mVideoId = intent.getStringExtra(KEY_EXTRA_VIDEO_ID) ?: ""
 
-        // Inject dependencies
-        (application as ZeTubeApp).appComponent.injectPlayerActivityFields(this)
-
-        /* Build MainViewModel */
-        val mMainViewModel = ViewModelProvider(this, mViewModelFactory)
-                .get(MainViewModel::class.java)
-
         /* Get Video object from DB and check for nullness */
-        val video = mMainViewModel.getVideoById(mVideoId)
+        val video = mainViewModel.getVideoById(mVideoId)
 
         fillViews(video)
         initYoutubePlayerView()
@@ -90,7 +82,7 @@ class PlayerActivity : AppCompatActivity() {
             } else {
                 R.string.msg_info_video_removed
             }
-            mMainViewModel.updateVideo(video)
+            mainViewModel.updateVideo(video)
             Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
             setSaveButton(video)
         }

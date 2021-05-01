@@ -6,21 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.activityViewModels
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.databinding.FragmentChannelVideosBinding
 import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.feed.VideoFeedAdapter
-import com.tuvakov.zetube.android.ui.feed.ViewModelFactory
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
+import dagger.hilt.android.AndroidEntryPoint
 
-
+@AndroidEntryPoint
 class ChannelVideosFragment : Fragment() {
 
-    private lateinit var viewModelFactory: ViewModelFactory
-    private lateinit var viewModel: ChannelDetailViewModel
+    private val viewModel: ChannelDetailViewModel by activityViewModels()
     private val adapter = VideoFeedAdapter()
 
     private lateinit var binding: FragmentChannelVideosBinding
@@ -32,33 +30,27 @@ class ChannelVideosFragment : Fragment() {
         return binding.root
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().let { it ->
-            val app = (it.application as ZeTubeApp)
-            viewModelFactory = app.appComponent.viewModelFactory()
-            viewModel = ViewModelProvider(it, viewModelFactory).get(ChannelDetailViewModel::class.java)
+        viewModel.channelVideos.observe(viewLifecycleOwner, { videos -> adapter.submitList(videos) })
 
-            viewModel.channelVideos.observe(viewLifecycleOwner, { videos -> adapter.submitList(videos) })
-
-            viewModel.videosState.observe(viewLifecycleOwner, {
-                when (it) {
-                    Success -> {
-                        showRecyclerView()
-                    }
-                    InProgress -> {
-                        showMessage(R.string.msg_info_loading, showProgressBar = true)
-                    }
-                    EmptyList -> {
-                        showMessage(R.string.msg_info_empty_result_set, showProgressBar = false)
-                    }
-                    is Error -> {
-                        showMessage(R.string.msg_error_generic, showProgressBar = false)
-                    }
+        viewModel.videosState.observe(viewLifecycleOwner, {
+            when (it) {
+                Success -> {
+                    showRecyclerView()
                 }
-            })
-        }
+                InProgress -> {
+                    showMessage(R.string.msg_info_loading, showProgressBar = true)
+                }
+                EmptyList -> {
+                    showMessage(R.string.msg_info_empty_result_set, showProgressBar = false)
+                }
+                is Error -> {
+                    showMessage(R.string.msg_error_generic, showProgressBar = false)
+                }
+            }
+        })
     }
 
     /* TODO: This logic is repeated in several places. Try to generalize. */

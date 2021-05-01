@@ -5,14 +5,14 @@ import androidx.lifecycle.*
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
 import com.tuvakov.zetube.android.ui.channeldetail.*
-import com.tuvakov.zetube.android.ui.channels.ChannelsViewModel
 import com.tuvakov.zetube.android.utils.SyncUtils
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
-import javax.inject.Singleton
 
-class MainViewModel internal constructor(
+@HiltViewModel
+class MainViewModel @Inject constructor(
         private val syncUtils: SyncUtils,
         private val repository: Repository
 ) : ViewModel() {
@@ -73,26 +73,5 @@ class MainViewModel internal constructor(
 
     companion object {
         private const val TAG = "MainViewModel"
-    }
-}
-
-@Singleton
-class ViewModelFactory @Inject internal constructor(
-        private val repository: Repository,
-        private val syncUtils: SyncUtils
-) : ViewModelProvider.Factory {
-    override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return when {
-            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(syncUtils, repository) as T
-            }
-            modelClass.isAssignableFrom(ChannelsViewModel::class.java) -> {
-                ChannelsViewModel(repository) as T
-            }
-            modelClass.isAssignableFrom(ChannelDetailViewModel::class.java) -> {
-                ChannelDetailViewModel(repository) as T
-            }
-            else -> throw IllegalArgumentException("Unknown ViewModel class")
-        }
     }
 }

@@ -14,12 +14,12 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
@@ -28,24 +28,22 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccoun
 import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException
 import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ZeTubeApp
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.databinding.ActivityVideoFeedBinding
 import com.tuvakov.zetube.android.ui.channeldetail.*
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
+import dagger.hilt.android.AndroidEntryPoint
 import pub.devrel.easypermissions.AfterPermissionGranted
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
 import java.util.*
 import javax.inject.Inject
 
+@AndroidEntryPoint
 class VideoFeedActivity : AppCompatActivity(),
         PermissionCallbacks,
         NavigationView.OnNavigationItemSelectedListener {
-
-    @Inject
-    lateinit var mViewModelFactory: ViewModelFactory
 
     @Inject
     lateinit var mYouTubeApiUtils: YouTubeApiUtils
@@ -56,8 +54,9 @@ class VideoFeedActivity : AppCompatActivity(),
     @Inject
     lateinit var mDateTimeUtils: DateTimeUtils
 
+    private val mMainViewModel: MainViewModel by viewModels()
+
     private lateinit var mCredential: GoogleAccountCredential
-    private lateinit var mMainViewModel: MainViewModel
     private lateinit var binding: ActivityVideoFeedBinding
     private lateinit var mTextViewAccountName: TextView
 
@@ -65,9 +64,6 @@ class VideoFeedActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         binding = ActivityVideoFeedBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        // Inject fields
-        (application as ZeTubeApp).appComponent.injectVideoFeedActivityFields(this)
 
         setSupportActionBar(binding.lToolbar.toolbar)
 
@@ -106,9 +102,7 @@ class VideoFeedActivity : AppCompatActivity(),
         }
         binding.lVideoFeed.rvVideoFeed.adapter = videoFeedAdapter
 
-        /* Setup the ViewModel and start observing */
-        mMainViewModel = ViewModelProvider(this, mViewModelFactory)
-                .get(MainViewModel::class.java)
+        /* Start observing */
 
         mMainViewModel.videoFeed.observe(this, Observer { videos: List<Video> ->
             if (videos.isEmpty() && mMainViewModel.isSuccess) {

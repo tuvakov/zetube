@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.channeldetail.fragments
+package com.tuvakov.zetube.android.ui.channel.fragments
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -12,9 +12,9 @@ import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.databinding.FragmentChannelDescriptionBinding
-import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailViewModel
-import com.tuvakov.zetube.android.ui.channeldetail.Error
-import com.tuvakov.zetube.android.ui.channeldetail.Success
+import com.tuvakov.zetube.android.ui.channel.ChannelDetailViewModel
+import com.tuvakov.zetube.android.ui.channel.Error
+import com.tuvakov.zetube.android.ui.channel.Success
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 import dagger.hilt.android.AndroidEntryPoint

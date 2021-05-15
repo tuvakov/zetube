@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorPrimaryDark"
-    tools:context=".ui.channeldetail.fragments.ChannelDescriptionFragment">
+    tools:context=".ui.channel.fragments.ChannelDescriptionFragment">
 
     <ImageView
         android:id="@+id/iv_channel_avatar"

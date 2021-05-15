@@ -20,7 +20,7 @@ import com.pierfrancescosoffritti.androidyoutubeplayer.core.player.utils.loadOrC
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.databinding.ActivityPlayerBinding
-import com.tuvakov.zetube.android.ui.feed.MainViewModel
+import com.tuvakov.zetube.android.ui.videos.MainViewModel
 import com.tuvakov.zetube.android.utils.FullScreenHelper
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show

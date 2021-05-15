@@ -1,10 +1,10 @@
-package com.tuvakov.zetube.android.ui.feed
+package com.tuvakov.zetube.android.ui.videos
 
 import android.util.Log
 import androidx.lifecycle.*
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
-import com.tuvakov.zetube.android.ui.channeldetail.*
+import com.tuvakov.zetube.android.ui.channel.*
 import com.tuvakov.zetube.android.utils.SyncUtils
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch

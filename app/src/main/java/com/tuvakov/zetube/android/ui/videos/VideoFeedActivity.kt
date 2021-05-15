@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.feed
+package com.tuvakov.zetube.android.ui.videos
 
 import android.Manifest
 import android.accounts.AccountManager
@@ -30,7 +30,7 @@ import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecovera
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.databinding.ActivityVideoFeedBinding
-import com.tuvakov.zetube.android.ui.channeldetail.*
+import com.tuvakov.zetube.android.ui.channel.*
 import com.tuvakov.zetube.android.ui.channels.ChannelsActivity
 import com.tuvakov.zetube.android.utils.*
 import dagger.hilt.android.AndroidEntryPoint

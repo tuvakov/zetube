@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.databinding.ItemViewChannelBinding
-import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
+import com.tuvakov.zetube.android.ui.channel.ChannelDetailActivity
 
 class ChannelsAdapter : ListAdapter<Subscription, RecyclerView.ViewHolder>(SUBSCRIPTION_COMPARATOR) {
 

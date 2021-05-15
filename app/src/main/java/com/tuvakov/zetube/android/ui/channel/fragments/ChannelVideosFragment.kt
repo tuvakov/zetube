@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.channeldetail.fragments
+package com.tuvakov.zetube.android.ui.channel.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,8 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.databinding.FragmentChannelVideosBinding
-import com.tuvakov.zetube.android.ui.channeldetail.*
-import com.tuvakov.zetube.android.ui.feed.VideoFeedAdapter
+import com.tuvakov.zetube.android.ui.channel.*
+import com.tuvakov.zetube.android.ui.videos.VideoFeedAdapter
 import com.tuvakov.zetube.android.utils.hide
 import com.tuvakov.zetube.android.utils.show
 import dagger.hilt.android.AndroidEntryPoint

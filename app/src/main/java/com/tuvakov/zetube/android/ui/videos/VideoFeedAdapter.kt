@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.feed
+package com.tuvakov.zetube.android.ui.videos
 
 import android.content.Intent
 import android.graphics.Color
@@ -16,7 +16,7 @@ import com.bumptech.glide.Glide
 import com.tuvakov.zetube.android.R
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.databinding.ItemVideoFeedBinding
-import com.tuvakov.zetube.android.ui.channeldetail.ChannelDetailActivity
+import com.tuvakov.zetube.android.ui.channel.ChannelDetailActivity
 import com.tuvakov.zetube.android.ui.player.PlayerActivity
 
 class VideoFeedAdapter : ListAdapter<Video, VideoViewHolder>(VIDEO_COMPARATOR) {

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/dest_videos"
+        android:icon="@drawable/ic_feed_white_24dp"
+        android:title="@string/nav_item_feed" />
+    <item
+        android:id="@+id/dest_saved_videos"
+        android:icon="@drawable/ic_playlist_play_white_24dp"
+        android:title="@string/nav_item_saved_videos" />
+    <item
+        android:id="@+id/dest_channels"
+        android:icon="@drawable/ic_channels_white_24dp"
+        android:title="@string/nav_item_channels" />
+    <item
+        android:id="@+id/dest_settings"
+        android:icon="@drawable/ic_baseline_settings_24"
+        android:title="@string/nav_item_saved_videos" />
+</menu>

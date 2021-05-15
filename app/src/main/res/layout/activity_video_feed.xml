@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity"
+    tools:context="com.tuvakov.zetube.android.ui.videos.VideoFeedActivity"
     tools:openDrawer="start">
 
     <LinearLayout

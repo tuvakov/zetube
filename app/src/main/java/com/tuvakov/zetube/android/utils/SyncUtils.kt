@@ -5,7 +5,7 @@ import com.google.api.services.youtube.YouTube
 import com.tuvakov.zetube.android.data.Subscription
 import com.tuvakov.zetube.android.data.Video
 import com.tuvakov.zetube.android.repository.Repository
-import com.tuvakov.zetube.android.ui.channeldetail.ImmatureSyncException
+import com.tuvakov.zetube.android.ui.channel.ImmatureSyncException
 import kotlinx.coroutines.*
 import java.io.IOException
 import javax.inject.Inject

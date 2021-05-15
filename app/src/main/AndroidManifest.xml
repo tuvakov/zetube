@@ -14,7 +14,14 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ui.feed.VideoFeedActivity">
+        <activity android:name=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".ui.videos.VideoFeedActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -24,15 +31,15 @@
         <activity
             android:name=".ui.player.PlayerActivity"
             android:configChanges="orientation|screenSize|keyboardHidden|smallestScreenSize|screenLayout"
-            android:parentActivityName=".ui.feed.VideoFeedActivity">
+            android:parentActivityName=".ui.videos.VideoFeedActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.tuvakov.zetube.android.ui.feed.VideoFeedActivity" />
+                android:value="com.tuvakov.zetube.android.ui.videos.VideoFeedActivity" />
         </activity>
         <activity
             android:name=".ui.channels.ChannelsActivity"
-            android:parentActivityName=".ui.feed.VideoFeedActivity" />
-        <activity android:name=".ui.channeldetail.ChannelDetailActivity" />
+            android:parentActivityName=".ui.videos.VideoFeedActivity" />
+        <activity android:name=".ui.channel.ChannelDetailActivity" />
     </application>
 
 </manifest>

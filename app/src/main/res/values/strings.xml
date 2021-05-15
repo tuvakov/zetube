@@ -57,14 +57,21 @@
     <!-- Navigation Drawer Strings -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_item_feed">Feed</string>
+    <string name="nav_item_feed">Videos</string>
     <string name="nav_item_channels">Channels</string>
     <string name="nav_item_saved_videos">Saved Videos</string>
+    <string name="nav_item_settings">Settings</string>
     <string name="nav_item_account">Account</string>
     <string name="nav_item_logout">Logout</string>
 
     <!-- ChannelDetail ViewPager tab titles -->
     <string name="tab_text_videos">Videos</string>
     <string name="tab_text_description">Description</string>
+
+    <!-- Nav destination labels -->
+    <string name="dest_label_videos">Videos</string>
+    <string name="dest_label_saved_videos">Saved Videos</string>
+    <string name="dest_label_channels">Channels</string>
+    <string name="dest_label_settings">Settings</string>
 
 </resources>

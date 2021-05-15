@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.channeldetail
+package com.tuvakov.zetube.android.ui.channel
 
 import android.os.Bundle
 import androidx.activity.viewModels

@@ -1,12 +1,12 @@
-package com.tuvakov.zetube.android.ui.channeldetail
+package com.tuvakov.zetube.android.ui.channel
 
 import android.content.Context
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentPagerAdapter
 import com.tuvakov.zetube.android.R
-import com.tuvakov.zetube.android.ui.channeldetail.fragments.ChannelDescriptionFragment
-import com.tuvakov.zetube.android.ui.channeldetail.fragments.ChannelVideosFragment
+import com.tuvakov.zetube.android.ui.channel.fragments.ChannelDescriptionFragment
+import com.tuvakov.zetube.android.ui.channel.fragments.ChannelVideosFragment
 
 private val TAB_TITLES = arrayOf(
         R.string.tab_text_videos,

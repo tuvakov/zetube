@@ -3,6 +3,7 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply plugin: 'dagger.hilt.android.plugin'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 android {
     compileSdkVersion 30
@@ -83,6 +84,10 @@ dependencies {
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
 
+    // Navigation
+    implementation "androidx.navigation:navigation-fragment-ktx:$nav_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
+
     /* YouTube Data Api related dependencies */
     def playServices = '19.0.0'
     implementation "com.google.android.gms:play-services-auth:$playServices"
@@ -129,6 +134,8 @@ dependencies {
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
 
     testImplementation "androidx.room:room-testing:$room"
+
+    androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     /* Desugaring */
     def corelib_desugar_version = '1.1.1'

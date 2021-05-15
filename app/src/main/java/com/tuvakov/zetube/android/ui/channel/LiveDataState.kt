@@ -1,4 +1,4 @@
-package com.tuvakov.zetube.android.ui.channeldetail
+package com.tuvakov.zetube.android.ui.channel
 
 sealed class LiveDataState
 

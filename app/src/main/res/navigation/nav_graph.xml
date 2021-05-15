@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph.xml"
+    app:startDestination="@id/dest_videos">
+
+    <fragment
+        android:id="@+id/dest_videos"
+        android:name="com.tuvakov.zetube.android.ui.videos.VideosFragment"
+        android:label="@string/dest_label_videos"
+        tools:layout="@layout/fragment_videos" />
+
+    <fragment
+        android:id="@+id/dest_saved_videos"
+        android:name="com.tuvakov.zetube.android.ui.savedvideos.SavedVideosFragment"
+        android:label="@string/dest_label_saved_videos"
+        tools:layout="@layout/fragment_videos" />
+
+    <fragment
+        android:id="@+id/dest_channels"
+        android:name="com.tuvakov.zetube.android.ui.channels.ChannelsFragment"
+        android:label="@string/dest_label_channels"
+        tools:layout="@layout/fragment_channels" />
+
+    <fragment
+        android:id="@+id/dest_channel"
+        android:name="com.tuvakov.zetube.android.ui.channel.ChannelFragment"
+        tools:layout="@layout/fragment_channel" />
+
+    <fragment
+        android:id="@+id/dest_settings"
+        android:name="com.tuvakov.zetube.android.ui.settings.SettingsFragment"
+        android:label="@string/dest_label_settings"
+        tools:layout="@layout/fragment_settings" />
+
+    <fragment
+        android:id="@+id/dest_player"
+        android:name="com.tuvakov.zetube.android.ui.player.PlayerFragment"
+        tools:layout="@layout/fragment_player" />
+
+</navigation>

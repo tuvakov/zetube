@@ -37,7 +37,7 @@ class ChannelDescriptionFragment : Fragment() {
 
         viewModel.channel.observe(viewLifecycleOwner, { sub -> populateView(sub) })
 
-        viewModel.channelState.observe(viewLifecycleOwner, {
+        viewModel.channelState.observe(viewLifecycleOwner) {
             when (it) {
                 Success -> {
                     binding.tvFeedback.hide()
@@ -46,8 +46,9 @@ class ChannelDescriptionFragment : Fragment() {
                     binding.tvFeedback.setText(R.string.msg_error_generic)
                     binding.tvFeedback.show()
                 }
+                else -> {}
             }
-        })
+        }
     }
 
     private fun populateView(sub: Subscription) {

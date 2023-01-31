@@ -1,20 +1,27 @@
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android-extensions'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
-apply plugin: 'dagger.hilt.android.plugin'
-apply plugin: "androidx.navigation.safeargs.kotlin"
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+    id 'androidx.navigation.safeargs.kotlin'
+    id 'com.google.dagger.hilt.android'
+}
 
 android {
-    compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+
+    namespace "com.tuvakov.zetube.android"
+    compileSdk 33
+
     defaultConfig {
         applicationId "com.tuvakov.zetube.android"
-        minSdkVersion 21
-        targetSdkVersion 30
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
+
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
 
     buildTypes {
@@ -32,46 +39,49 @@ android {
         // Flag to enable support for the new language APIs
         coreLibraryDesugaringEnabled true
 
-        sourceCompatibility = '1.8'
-        targetCompatibility = '1.8'
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = JavaVersion.VERSION_1_8
     }
 }
 
-repositories {
-    mavenCentral()
+kapt {
+    correctErrorTypes true
 }
 
 dependencies {
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-
-    def appcompat = '1.2.0'
+    def appcompat = '1.6.0'
     implementation "androidx.appcompat:appcompat:$appcompat"
 
-    def preference = '1.1.1'
+    def preference = '1.2.0'
     implementation "androidx.preference:preference-ktx:$preference"
 
-    def coreKtx = '1.3.2'
+    def coreKtx = '1.9.0'
     implementation "androidx.core:core-ktx:$coreKtx"
 
     def viewModelKtx = '2.3.1'
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$viewModelKtx"
 
-    def constraintLayout = '2.0.4'
+    def constraintLayout = '2.1.4'
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayout"
 
-    def material = '1.4.0-alpha02'
+    def material = '1.9.0-alpha01'
     implementation "com.google.android.material:material:$material"
 
     def drawerLayout = '1.1.1'
     implementation "androidx.drawerlayout:drawerlayout:$drawerLayout"
 
-    def room = '2.3.0'
+    def room = '2.5.0'
     implementation "androidx.room:room-runtime:$room"
     implementation "androidx.room:room-ktx:$room"
     kapt "androidx.room:room-compiler:$room"
@@ -80,7 +90,7 @@ dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines"
 
-    def lifecycle = '2.3.1'
+    def lifecycle = '2.5.1'
     implementation "androidx.lifecycle:lifecycle-common-java8:$lifecycle"
     implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle"
 
@@ -89,7 +99,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$nav_version"
 
     /* YouTube Data Api related dependencies */
-    def playServices = '19.0.0'
+    def playServices = '20.4.1'
     implementation "com.google.android.gms:play-services-auth:$playServices"
 
     def googleApiClient = '1.25.0'
@@ -97,14 +107,14 @@ dependencies {
         exclude group: 'org.apache.httpcomponents'
     }
 
-    def youtubeDataV3 = 'rev212-1.25.0'
+    def youtubeDataV3 = 'rev20210915-1.32.1'
     implementation("com.google.apis:google-api-services-youtube:v3-$youtubeDataV3") {
         exclude group: 'org.apache.httpcomponents'
     }
 
     /* Third party libraries */
 
-    def player = '10.0.5'
+    def player = '11.1.0'
     implementation "com.pierfrancescosoffritti.androidyoutubeplayer:core:$player"
 
     def glide = '4.12.0'
@@ -118,26 +128,29 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
+    /* Testing libraries */
+
     def junit = '4.13.2'
     testImplementation "junit:junit:$junit"
 
     def mockito = '3.9.0'
     testImplementation "org.mockito:mockito-core:$mockito"
 
-    def androidTestRunner = '1.3.0'
+    testImplementation "androidx.room:room-testing:$room"
+
+    def androidTestRunner = '1.5.2'
     androidTestImplementation "androidx.test:runner:$androidTestRunner"
 
-    def androidJunit = '1.1.2'
+    def androidJunit = '1.1.5'
     androidTestImplementation "androidx.test.ext:junit:$androidJunit"
 
-    def espresso = '3.3.0'
+    def espresso = '3.5.1'
     androidTestImplementation "androidx.test.espresso:espresso-core:$espresso"
-
-    testImplementation "androidx.room:room-testing:$room"
 
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
     /* Desugaring */
+
     def corelib_desugar_version = '1.1.1'
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:$corelib_desugar_version"
 }

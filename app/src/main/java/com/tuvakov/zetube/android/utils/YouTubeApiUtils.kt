@@ -5,7 +5,7 @@ import android.util.Log
 import com.google.api.client.extensions.android.http.AndroidHttp
 import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential
 import com.google.api.client.json.JsonFactory
-import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.json.gson.GsonFactory
 import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.youtube.YouTube
 import com.google.api.services.youtube.YouTubeScopes
@@ -31,7 +31,7 @@ class YouTubeApiUtils @Inject internal constructor(
             val credential = googleCredential
             credential.selectedAccountName = accountName
             val transport = AndroidHttp.newCompatibleTransport()
-            val jsonFactory: JsonFactory = JacksonFactory.getDefaultInstance()
+            val jsonFactory: JsonFactory = GsonFactory()
             return YouTube.Builder(transport, jsonFactory, credential)
                     .setApplicationName(mContext.getString(R.string.app_name))
                     .build()

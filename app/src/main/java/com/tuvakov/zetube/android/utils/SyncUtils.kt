@@ -48,7 +48,7 @@ class SyncUtils @Inject constructor(
     private suspend fun getSubscriptions(youTubeService: YouTube): List<Subscription> =
             withContext(Dispatchers.IO) {
                 val list = youTubeService.subscriptions()
-                        .list("snippet")
+                        .list(listOf("snippet"))
                         .setMine(true)
                         .setMaxResults(MAX_LIMIT_SUBS)
                         .setOrder("alphabetical")
@@ -92,7 +92,7 @@ class SyncUtils @Inject constructor(
                 val uploadPlayListId = subscription.id.replaceFirst("[C]".toRegex(), "U")
 
                 val list = youTubeService.playlistItems()
-                        .list("snippet")
+                        .list(listOf("snippet"))
                         .setMaxResults(MAX_LIMIT_VIDEOS)
                         .setPlaylistId(uploadPlayListId)
 

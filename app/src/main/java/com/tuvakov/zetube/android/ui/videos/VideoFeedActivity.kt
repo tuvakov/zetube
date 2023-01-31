@@ -285,7 +285,7 @@ class VideoFeedActivity : AppCompatActivity(),
                 connectionStatusCode,
                 REQUEST_GOOGLE_PLAY_SERVICES
         )
-        dialog.show()
+        dialog?.show()
     }
 
     private fun handleSyncStatus(status: LiveDataState) {

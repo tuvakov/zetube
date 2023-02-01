@@ -134,6 +134,9 @@ dependencies {
     implementation "com.google.dagger:hilt-android:$hilt_version"
     kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
+    def timber_version = '5.0.1'
+    implementation "com.jakewharton.timber:timber:$timber_version"
+
     /* Testing libraries */
 
     def junit = '4.13.2'
